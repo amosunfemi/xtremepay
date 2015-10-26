@@ -1,0 +1,17 @@
+{
+  "service": {
+    "name": "merchant",
+    "port": 3002,
+    "mode":"test",
+    "apiprefix":"xtremepay/v1.0",
+    "datastore": {
+      "test": {
+        "host": "127.0.0.1",
+        "port": 5432,
+        "database": "xtremepay_dev",
+        "user": "postgres",
+        "password": "sunday123"
+      }
+    }
+  }
+}

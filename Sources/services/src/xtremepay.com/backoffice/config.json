@@ -1,0 +1,31 @@
+{
+  "service": {
+    "name": "merchant",
+    "port": 3001,
+    "mode":"test",
+    "apiprefix":"/xpay/v1.0",
+    "datastore": {
+      "dev": {
+        "host": "127.0.0.1",
+        "port": 5432,
+        "database": "xtremepay_dev",
+        "user": "postgres",
+        "password": "sunday123"
+      },
+      "test": {
+        "host": "127.0.0.1",
+        "port": 5432,
+        "database": "xtremepay_test",
+        "user": "postgres",
+        "password": "sunday123"
+      },
+      "production": {
+        "host": "127.0.0.1",
+        "port": 5432,
+        "database": "xtremepay_prod",
+        "user": "postgres",
+        "password": "sunday123"
+      }
+    }
+  }
+}

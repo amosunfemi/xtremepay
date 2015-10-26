@@ -1,0 +1,130 @@
+!<arch>
+__.PKGDEF       0           0     0     644     9463      `
+go object darwin amd64 go1.5.1 X:none
+build id "d8e7734de6e696bd9e16ae7c46c1f03d7b507d31"
+
+$$
+package merchant
+	import runtime "runtime"
+	import models "xtremepay.com/backoffice/models"
+	import time "time"
+	type @"time".zone struct { @"time".name string; @"time".offset int; @"time".isDST bool }
+	type @"time".zoneTrans struct { @"time".when int64; @"time".index uint8; @"time".isstd bool; @"time".isutc bool }
+	type @"time".Location struct { @"time".name string; @"time".zone []@"time".zone; @"time".tx []@"time".zoneTrans; @"time".cacheStart int64; @"time".cacheEnd int64; @"time".cacheZone *@"time".zone }
+	func (@"time".lÂ·2 *@"time".Location "esc:0x22") String () (? string)
+	func (@"time".lÂ·2 *@"time".Location "esc:0x1") @"time".firstZoneUsed () (? bool)
+	func (@"time".lÂ·2 *@"time".Location "esc:0x12") @"time".get () (? *@"time".Location)
+	func (@"time".lÂ·6 *@"time".Location "esc:0x32") @"time".lookup (@"time".secÂ·7 int64) (@"time".nameÂ·1 string, @"time".offsetÂ·2 int, @"time".isDSTÂ·3 bool, @"time".startÂ·4 int64, @"time".endÂ·5 int64)
+	func (@"time".lÂ·2 *@"time".Location "esc:0x1") @"time".lookupFirstZone () (? int)
+	func (@"time".lÂ·4 *@"time".Location "esc:0x1") @"time".lookupName (@"time".nameÂ·5 string "esc:0x1", @"time".unixÂ·6 int64) (@"time".offsetÂ·1 int, @"time".isDSTÂ·2 bool, @"time".okÂ·3 bool)
+	type @"time".Duration int64
+	func (@"time".dÂ·2 @"time".Duration) Hours () (? float64) { var @"time".hourÂ·3 @"time".Duration; ; @"time".hourÂ·3 = @"time".dÂ·2 / @"time".Duration(0x34630b8a000); var @"time".nsecÂ·4 @"time".Duration; ; @"time".nsecÂ·4 = @"time".dÂ·2 % @"time".Duration(0x34630b8a000); return float64(@"time".hourÂ·3) + float64(@"time".nsecÂ·4) * 8190022623310637111963488201822504381538623676021880892417778544696899264837610290203272971060556344039023584360473938041055625214280336402169897364226048p-553 }
+	func (@"time".dÂ·2 @"time".Duration) Minutes () (? float64) { var @"time".minÂ·3 @"time".Duration; ; @"time".minÂ·3 = @"time".dÂ·2 / @"time".Duration(0xdf8475800); var @"time".nsecÂ·4 @"time".Duration; ; @"time".nsecÂ·4 = @"time".dÂ·2 % @"time".Duration(0xdf8475800); return float64(@"time".minÂ·3) + float64(@"time".nsecÂ·4) * 7678146209353722106395056769533233877065564876941352542109479049699919628723768656821910653339403201031675627614471533358284117434246264392176261853609984p-547 }
+	func (@"time".dÂ·2 @"time".Duration) Nanoseconds () (? int64) { return int64(@"time".dÂ·2) }
+	func (@"time".dÂ·2 @"time".Duration) Seconds () (? float64) { var @"time".secÂ·3 @"time".Duration; ; @"time".secÂ·3 = @"time".dÂ·2 / @"time".Duration(0x3b9aca00); var @"time".nsecÂ·4 @"time".Duration; ; @"time".nsecÂ·4 = @"time".dÂ·2 % @"time".Duration(0x3b9aca00); return float64(@"time".secÂ·3) + float64(@"time".nsecÂ·4) * 7198262071269114660816079141112770740375861891461678802759824945047098083990024106014198994535558872472104883612039846078596891298747423852523262413111296p-541 }
+	func (@"time".dÂ·2 @"time".Duration) String () (? string)
+	type @"time".Month int
+	func (@"time".mÂ·2 @"time".Month) String () (? string) { return @"time".months[@"time".mÂ·2 - @"time".Month(0x1)] }
+	type @"time".Weekday int
+	func (@"time".dÂ·2 @"time".Weekday) String () (? string) { return @"time".days[@"time".dÂ·2] }
+	type @"time".Time struct { @"time".sec int64; @"time".nsec int32; @"time".loc *@"time".Location }
+	func (@"time".tÂ·2 @"time".Time "esc:0x12") Add (@"time".dÂ·3 @"time".Duration) (? @"time".Time) { @"time".tÂ·2.@"time".sec += int64(@"time".dÂ·3 / @"time".Duration(0x3b9aca00)); var @"time".nsecÂ·4 int32; ; @"time".nsecÂ·4 = int32(@"time".tÂ·2.@"time".nsec) + int32(@"time".dÂ·3 % @"time".Duration(0x3b9aca00)); if @"time".nsecÂ·4 >= 0x3b9aca00 { @"time".tÂ·2.@"time".sec++; @"time".nsecÂ·4 -= 0x3b9aca00 } else { if @"time".nsecÂ·4 < 0x0 { @"time".tÂ·2.@"time".sec--; @"time".nsecÂ·4 += 0x3b9aca00 } }; @"time".tÂ·2.@"time".nsec = @"time".nsecÂ·4; return @"time".tÂ·2 }
+	func (@"time".tÂ·2 @"time".Time "esc:0x12") AddDate (@"time".yearsÂ·3 int, @"time".monthsÂ·4 int, @"time".daysÂ·5 int) (? @"time".Time)
+	func (@"time".tÂ·2 @"time".Time "esc:0x1") After (@"time".uÂ·3 @"time".Time "esc:0x1") (? bool) { return @"time".tÂ·2.@"time".sec > @"time".uÂ·3.@"time".sec || @"time".tÂ·2.@"time".sec == @"time".uÂ·3.@"time".sec && @"time".tÂ·2.@"time".nsec > @"time".uÂ·3.@"time".nsec }
+	func (@"time".tÂ·2 @"time".Time "esc:0x9") AppendFormat (@"time".bÂ·3 []byte "esc:0x1a", @"time".layoutÂ·4 string "esc:0x9") (? []byte)
+	func (@"time".tÂ·2 @"time".Time "esc:0x1") Before (@"time".uÂ·3 @"time".Time "esc:0x1") (? bool) { return @"time".tÂ·2.@"time".sec < @"time".uÂ·3.@"time".sec || @"time".tÂ·2.@"time".sec == @"time".uÂ·3.@"time".sec && @"time".tÂ·2.@"time".nsec < @"time".uÂ·3.@"time".nsec }
+	func (@"time".tÂ·4 @"time".Time "esc:0x1") Clock () (@"time".hourÂ·1 int, @"time".minÂ·2 int, @"time".secÂ·3 int)
+	func (@"time".tÂ·4 @"time".Time "esc:0x1") Date () (@"time".yearÂ·1 int, @"time".monthÂ·2 @"time".Month, @"time".dayÂ·3 int)
+	func (@"time".tÂ·2 @"time".Time "esc:0x1") Day () (? int)
+	func (@"time".tÂ·2 @"time".Time "esc:0x1") Equal (@"time".uÂ·3 @"time".Time "esc:0x1") (? bool) { return @"time".tÂ·2.@"time".sec == @"time".uÂ·3.@"time".sec && @"time".tÂ·2.@"time".nsec == @"time".uÂ·3.@"time".nsec }
+	func (@"time".tÂ·2 @"time".Time "esc:0x9") Format (@"time".layoutÂ·3 string "esc:0x9") (? string)
+	func (@"time".tÂ·2 *@"time".Time "esc:0x1") GobDecode (@"time".dataÂ·3 []byte "esc:0x1") (? error)
+	func (@"time".tÂ·3 @"time".Time "esc:0x1") GobEncode () (? []byte, ? error)
+	func (@"time".tÂ·2 @"time".Time "esc:0x1") Hour () (? int)
+	func (@"time".tÂ·3 @"time".Time "esc:0x1") ISOWeek () (@"time".yearÂ·1 int, @"time".weekÂ·2 int)
+	func (@"time".tÂ·2 @"time".Time "esc:0x12") In (@"time".locÂ·3 *@"time".Location "esc:0x12") (? @"time".Time)
+	func (@"time".tÂ·2 @"time".Time "esc:0x1") IsZero () (? bool) { return @"time".tÂ·2.@"time".sec == 0x0 && @"time".tÂ·2.@"time".nsec == 0x0 }
+	func (@"time".tÂ·2 @"time".Time "esc:0x12") Local () (? @"time".Time) { @"time".tÂ·2.@"time".loc = @"time".Local; return @"time".tÂ·2 }
+	func (@"time".tÂ·2 @"time".Time "esc:0x12") Location () (? *@"time".Location) { var @"time".lÂ·3 *@"time".Location; ; @"time".lÂ·3 = @"time".tÂ·2.@"time".loc; if @"time".lÂ·3 == nil { @"time".lÂ·3 = @"time".UTC }; return @"time".lÂ·3 }
+	func (@"time".tÂ·3 @"time".Time "esc:0x1") MarshalBinary () (? []byte, ? error)
+	func (@"time".tÂ·3 @"time".Time "esc:0x9") MarshalJSON () (? []byte, ? error)
+	func (@"time".tÂ·3 @"time".Time "esc:0x9") MarshalText () (? []byte, ? error)
+	func (@"time".tÂ·2 @"time".Time "esc:0x1") Minute () (? int)
+	func (@"time".tÂ·2 @"time".Time "esc:0x1") Month () (? @"time".Month)
+	func (@"time".tÂ·2 @"time".Time "esc:0x1") Nanosecond () (? int) { return int(@"time".tÂ·2.@"time".nsec) }
+	func (@"time".tÂ·2 @"time".Time "esc:0x12") Round (@"time".dÂ·3 @"time".Duration) (? @"time".Time)
+	func (@"time".tÂ·2 @"time".Time "esc:0x1") Second () (? int)
+	func (@"time".tÂ·2 @"time".Time "esc:0x9") String () (? string)
+	func (@"time".tÂ·2 @"time".Time "esc:0x1") Sub (@"time".uÂ·3 @"time".Time "esc:0x1") (? @"time".Duration)
+	func (@"time".tÂ·2 @"time".Time "esc:0x12") Truncate (@"time".dÂ·3 @"time".Duration) (? @"time".Time)
+	func (@"time".tÂ·2 @"time".Time "esc:0x12") UTC () (? @"time".Time) { @"time".tÂ·2.@"time".loc = @"time".UTC; return @"time".tÂ·2 }
+	func (@"time".tÂ·2 @"time".Time "esc:0x1") Unix () (? int64) { return @"time".tÂ·2.@"time".sec + -0xe7791f700 }
+	func (@"time".tÂ·2 @"time".Time "esc:0x1") UnixNano () (? int64) { return (@"time".tÂ·2.@"time".sec + -0xe7791f700) * 0x3b9aca00 + int64(@"time".tÂ·2.@"time".nsec) }
+	func (@"time".tÂ·2 *@"time".Time "esc:0x1") UnmarshalBinary (@"time".dataÂ·3 []byte "esc:0x1") (? error)
+	func (@"time".tÂ·2 *@"time".Time "esc:0x1") UnmarshalJSON (@"time".dataÂ·3 []byte "esc:0x1") (@"time".errÂ·1 error)
+	func (@"time".tÂ·2 *@"time".Time "esc:0x1") UnmarshalText (@"time".dataÂ·3 []byte "esc:0x1") (@"time".errÂ·1 error)
+	func (@"time".tÂ·2 @"time".Time "esc:0x1") Weekday () (? @"time".Weekday)
+	func (@"time".tÂ·2 @"time".Time "esc:0x1") Year () (? int)
+	func (@"time".tÂ·2 @"time".Time "esc:0x1") YearDay () (? int)
+	func (@"time".tÂ·3 @"time".Time "esc:0x32") Zone () (@"time".nameÂ·1 string, @"time".offsetÂ·2 int)
+	func (@"time".tÂ·2 @"time".Time "esc:0x1") @"time".abs () (? uint64)
+	func (@"time".tÂ·5 @"time".Time "esc:0x1") @"time".date (@"time".fullÂ·6 bool) (@"time".yearÂ·1 int, @"time".monthÂ·2 @"time".Month, @"time".dayÂ·3 int, @"time".ydayÂ·4 int)
+	func (@"time".tÂ·4 @"time".Time "esc:0x32") @"time".locabs () (@"time".nameÂ·1 string, @"time".offsetÂ·2 int, @"time".absÂ·3 uint64)
+	type @"xtremepay.com/backoffice/models".BaseModel struct { Id int; Createdat @"time".Time "sql:\"timestamp with time zone DEFAULT ('now'::text)::date\""; Updatedat @"time".Time; Deletedat *@"time".Time }
+	type @"".Merchant struct { ? @"xtremepay.com/backoffice/models".BaseModel; Account int; CustomerId int; CustomerNo string "sql:\"not null;unique\""; AlternativeId string "sql:\"not null;unique\"" }
+	type @"".MerchantGoods struct { ? @"xtremepay.com/backoffice/models".BaseModel; MerchantId int; PercentDiscount float32; AvailFrom @"time".Time; AvailTo @"time".Time; Promo bool; Status string; UnitPrice float32; Goodservice int }
+	func @"".init ()
+	var @"time".months [12]string
+	var @"time".days [7]string
+	var @"time".Local *@"time".Location
+	var @"time".UTC *@"time".Location
+
+$$
+ _go_.o          0           0     0     644     13651     `
+go object darwin amd64 go1.5.1 X:none
+
+!
+  go13ldBxtremepay.com/backoffice/models.atime.a ş"".init     eH‹%    H;av9¶    €û t¶    €ûuÃè    Æ    è    è    Æ    Ãè    ë±
+      $  "".initdoneÂ·   <  "".initdoneÂ·   R
+  "runtime.throwinit   b "".initdoneÂ·   n
+  Hxtremepay.com/backoffice/models.init   x
+  time.init   „ "".initdoneÂ·   ’
+  0runtime.morestack_noctxt        P P <P 
+ (( TgclocalsÂ·33cdeccccebe80329f1fdbee7f5874cb TgclocalsÂ·33cdeccccebe80329f1fdbee7f5874cb   ô/Users/amosunsunday/Documents/Official/xtremepay/Sources/services/src/xtremepay.com/backoffice/models/merchant/merchant.goş,type..hash."".Merchant    ŠeH‹%    H;a†è   Hƒì H‹\$(H‰$Hƒ<$ „Ä   H‹\$0H‰\$è    H‹D$H‹\$(H‰$Hƒ<$ „   Hƒ$@H‰D$0H‰D$HÇD$   è    H‹D$H‹\$(H‰$Hƒ<$ tUHƒ$PH‰D$0H‰D$è    H‹D$H‹\$(H‰$Hƒ<$ t#Hƒ$`H‰D$0H‰D$è    H‹\$H‰\$8HƒÄ Ã‰%    ëÔ‰%    ë¢‰%    édÿÿÿ‰%    é0ÿÿÿè    éûşÿÿ
+      l
+  htype..hash.xtremepay.com/backoffice/models.BaseModel   Ø
+  runtime.memhash   ª
+  runtime.strhash   ü
+  runtime.strhash   ø
+  0runtime.morestack_noctxt   0@  "".~r2  type.uintptr "".h type.uintptr "".p  "type.*"".Merchant @¹?@?    5Û TgclocalsÂ·0b86ef39f3fed835f14ba5f4d7c62fa2 TgclocalsÂ·33cdeccccebe80329f1fdbee7f5874cb   ô/Users/amosunsunday/Documents/Official/xtremepay/Sources/services/src/xtremepay.com/backoffice/models/merchant/merchant.goş(type..eq."".Merchant €  èeH‹%    H;a†×  HƒìHL‹L$PH‹|$XIƒù „·  Hƒÿ „¦  I‹H‹/H9ë…  L‰ÉHƒÁH‰øHƒÀH‹H‹(H9ë…p  ‹Y‹h9ë…b  H‹YH‹hH9ë…Q  L‰ÈHƒÀ H‰ùHƒÁ H‹H‹)H9ë…4  ‹X‹i9ë…&  H‹XH‹iH9ë…  I‹Y8H‹o8H9ë…  I‹Y@H‹o@H9ët
+ÆD$` HƒÄHÃI‹YHH‹oHH9ët
+ÆD$` HƒÄHÃI‹qPI‹IXH‹WPH‹GXH9Á…³   H‰t$8H‰4$H‰L$@H‰L$H‰T$(H‰T$H‰D$0H‰D$è    ¶\$ €û t}H‹\$PHƒû tnH‹S`H‹ChH‹\$XHƒû tWH‹s`H‹KhH9Èu@H‰T$(H‰$H‰D$0H‰D$H‰t$8H‰t$H‰L$@H‰L$è    ¶\$ €û t
+ÆD$`HƒÄHÃÆD$` HƒÄHÃ‰ë¥‰ëÆD$` HƒÄHÃÆD$` HƒÄHÃ‰éSşÿÿA‰éAşÿÿè    éşÿÿ
+      ø
+   runtime.eqstring   º
+   runtime.eqstring   Ö
+  0runtime.morestack_noctxt   0  "".autotmp_0009  type.string "".autotmp_0008  type.string "".autotmp_0007 ?type.string "".autotmp_0006 type.string "".autotmp_0005  type.*time.Time "".autotmp_0004  type.*time.Time "".~r2  type.bool "".q "type.*"".Merchant "".p  "type.*"".Merchant XÌ¹		% € €  »Å TgclocalsÂ·3bb21ca8fe1d99a3e492463bd711418a TgclocalsÂ·a8eabfc4a4514ed6b3b0c61e9680e440   ô/Users/amosunsunday/Documents/Official/xtremepay/Sources/services/src/xtremepay.com/backoffice/models/merchant/merchant.goş6type..hash."".MerchantGoods €	  €	eH‹%    H;a†#  Hƒì H‹\$(H‰$Hƒ<$ „ÿ  H‹\$0H‰\$è    H‹D$H‹\$(H‰$Hƒ<$ „Ë  Hƒ$@H‰D$0H‰D$HÇD$   è    H‹D$H‹\$(H‰$Hƒ<$ „‰  Hƒ$HH‰D$0H‰D$è    H‹D$H‹\$(H‰$Hƒ<$ „P  Hƒ$PH‰D$0H‰D$è    H‹D$H‹\$(H‰$Hƒ<$ „  Hƒ$hH‰D$0H‰D$è    H‹D$H‹\$(H‰$Hƒ<$ „Ş   H$€   H‰D$0H‰D$HÇD$   è    H‹D$H‹\$(H‰$Hƒ<$ „™   H$ˆ   H‰D$0H‰D$è    H‹D$H‹\$(H‰$Hƒ<$ tdH$˜   H‰D$0H‰D$è    H‹D$H‹\$(H‰$Hƒ<$ t/H$    H‰D$0H‰D$HÇD$   è    H‹\$H‰\$8HƒÄ Ã‰%    ëÈ‰%    ë“‰%    é[ÿÿÿ‰%    éÿÿÿ‰%    éİşÿÿ‰%    é¤şÿÿ‰%    ékşÿÿ‰%    é)şÿÿ‰%    éõıÿÿè    éÀıÿÿ
+      l
+  htype..hash.xtremepay.com/backoffice/models.BaseModel   Ø
+  runtime.memhash   ²
+  runtime.f32hash   Œ
+  (type..hash.time.Time   æ
+  (type..hash.time.Time   Ø
+  runtime.memhash   ¸
+  runtime.strhash   
+  runtime.f32hash   ú
+  runtime.memhash   î
+  0runtime.morestack_noctxt   0@  "".~r2  type.uintptr "".h type.uintptr "".p  ,type.*"".MerchantGoods @¸?@p À À  5‹ TgclocalsÂ·0b86ef39f3fed835f14ba5f4d7c62fa2 TgclocalsÂ·33cdeccccebe80329f1fdbee7f5874cb   ô/Users/amosunsunday/Documents/Official/xtremepay/Sources/services/src/xtremepay.com/backoffice/models/merchant/merchant.goş2type..eq."".MerchantGoods  
+  ˜
+eH‹%    H;a†o  HƒìHL‹L$PH‹t$XIƒù „O  Hƒş „>  I‹H‹.H9ë…%  L‰ÉHƒÁH‰ğHƒÀH‹H‹(H9ë…  ‹Y‹h9ë…ú  H‹YH‹hH9ë…é  L‰ÈHƒÀ H‰ñHƒÁ H‹H‹)H9ë…Ì  ‹X‹i9ë…¾  H‹XH‹iH9ë…­  I‹Y8H‹n8H9ë…œ  I‹Y@H‹n@H9ët
+ÆD$` HƒÄHÃóAAHóNH.È…g  Ša  L‰ÉHƒÁPH‰ğHƒÀPH‹H‹(H9ë…:  ‹Y‹h9ë…,  H‹YH‹hH9ë…  L‰ÈHƒÀhH‰ñHƒÁhH‹H‹)H9ë…ô   ‹X‹i9ë…æ   H‹XH‹iH9ë…Õ   A¶™€   ¶®€   @8ët
+ÆD$` HƒÄHÃI‹¹ˆ   I‹‰   H‹–ˆ   H‹†   H9Á…ˆ   H‰|$8H‰<$H‰L$@H‰L$H‰T$(H‰T$H‰D$0H‰D$è    H‹L$PH‹D$X¶\$ €û tHó˜   óˆ˜   .Èu)z'H‹™    H‹¨    H9ët
+ÆD$` HƒÄHÃÆD$`HƒÄHÃÆD$` HƒÄHÃÆD$` HƒÄHÃÆD$` HƒÄHÃÆD$` HƒÄHÃÆD$` HƒÄHÃÆD$` HƒÄHÃ‰é»ıÿÿA‰é©ıÿÿè    étıÿÿ
+      Â
+   runtime.eqstring   †
+
+  0runtime.morestack_noctxt   0  "".autotmp_0021 ?type.string "".autotmp_0020 type.string "".autotmp_0019  type.*time.Time "".autotmp_0018  type.*time.Time "".autotmp_0017  type.*time.Time "".autotmp_0016  type.*time.Time "".autotmp_0015  type.*time.Time "".autotmp_0014  type.*time.Time "".~r2  type.bool "".q ,type.*"".MerchantGoods "".p  ,type.*"".MerchantGoods ŠÌ¯˜							    à° TgclocalsÂ·3bb21ca8fe1d99a3e492463bd711418a TgclocalsÂ·a8eabfc4a4514ed6b3b0c61e9680e440   ô/Users/amosunsunday/Documents/Official/xtremepay/Sources/services/src/xtremepay.com/backoffice/models/merchant/merchant.goşTgclocalsÂ·33cdeccccebe80329f1fdbee7f5874cb           şTgclocalsÂ·33cdeccccebe80329f1fdbee7f5874cb           ş0"".initdoneÂ·  type.uint8   ş"".initÂ·f              "".init   şTgclocalsÂ·33cdeccccebe80329f1fdbee7f5874cb           şTgclocalsÂ·0b86ef39f3fed835f14ba5f4d7c62fa2             şTgclocalsÂ·a8eabfc4a4514ed6b3b0c61e9680e440              şTgclocalsÂ·3bb21ca8fe1d99a3e492463bd711418a             ş4type..hashfunc."".Merchant              ,type..hash."".Merchant   ş0type..eqfunc."".Merchant              (type..eq."".Merchant   ş*type..alg."".Merchant                        4type..hashfunc."".Merchant     0type..eqfunc."".Merchant   ş"runtime.gcbits.01    şDgo.string.hdr."*merchant.Merchant"                       <go.string."*merchant.Merchant"   ş<go.string."*merchant.Merchant" 0  &*merchant.Merchant  ş"type.*"".Merchant                    ­èêM 6                                                        0   runtime.algarray   @  "runtime.gcbits.01   P  Dgo.string.hdr."*merchant.Merchant"   p  4go.weak.type.**"".Merchant   €  "runtime.zerovalue      type."".Merchant   ş&runtime.gcbits.c814   È şBgo.string.hdr."merchant.Merchant"                       :go.string."merchant.Merchant"   ş:go.string."merchant.Merchant" 0  $merchant.Merchant  ş.go.string.hdr."Account"                       &go.string."Account"   ş&go.string."Account"   Account  ş4go.string.hdr."CustomerId"             
+          ,go.string."CustomerId"   ş,go.string."CustomerId"    CustomerId  ş4go.string.hdr."CustomerNo"             
+          ,go.string."CustomerNo"   ş,go.string."CustomerNo"    CustomerNo  şNgo.string.hdr."sql:\"not null;unique\""                       Fgo.string."sql:\"not null;unique\""   şFgo.string."sql:\"not null;unique\"" 0  ,sql:"not null;unique"  ş:go.string.hdr."AlternativeId"                       2go.string."AlternativeId"   ş2go.string."AlternativeId"    AlternativeId  ş0go.string.hdr."Merchant"                       (go.string."Merchant"   ş(go.string."Merchant"    Merchant  şpgo.string.hdr."xtremepay.com/backoffice/models/merchant"             (          hgo.string."xtremepay.com/backoffice/models/merchant"   şhgo.string."xtremepay.com/backoffice/models/merchant" `  Rxtremepay.com/backoffice/models/merchant  ş"go.importpath."".             (          hgo.string."xtremepay.com/backoffice/models/merchant"   ş type."".Merchant      p       h       y½o                                                                                                                                               @                                       H                                       P                                       `                                               *0  *type..alg."".Merchant   @  &runtime.gcbits.c814   P  Bgo.string.hdr."merchant.Merchant"   p  "type.*"".Merchant   €  "runtime.zerovalue   À  type."".Merchant   à  \type.xtremepay.com/backoffice/models.BaseModel     .go.string.hdr."Account"   °  type.int   à  4go.string.hdr."CustomerId"   €  type.int   °  4go.string.hdr."CustomerNo"   Ğ  type.string   à  Ngo.string.hdr."sql:\"not null;unique\""   €  :go.string.hdr."AlternativeId"      type.string   °  Ngo.string.hdr."sql:\"not null;unique\""   `Ğ  type."".Merchant   Ğ  0go.string.hdr."Merchant"   à  "go.importpath."".   ğ   type."".Merchant   şTgclocalsÂ·33cdeccccebe80329f1fdbee7f5874cb           şTgclocalsÂ·0b86ef39f3fed835f14ba5f4d7c62fa2             şTgclocalsÂ·a8eabfc4a4514ed6b3b0c61e9680e440              şTgclocalsÂ·3bb21ca8fe1d99a3e492463bd711418a             ş>type..hashfunc."".MerchantGoods              6type..hash."".MerchantGoods   ş:type..eqfunc."".MerchantGoods              2type..eq."".MerchantGoods   ş4type..alg."".MerchantGoods                        >type..hashfunc."".MerchantGoods     :type..eqfunc."".MerchantGoods   şNgo.string.hdr."*merchant.MerchantGoods"                       Fgo.string."*merchant.MerchantGoods"   şFgo.string."*merchant.MerchantGoods" 0  0*merchant.MerchantGoods  ş,type.*"".MerchantGoods                    gÔKQ 6                                                        0   runtime.algarray   @  "runtime.gcbits.01   P  Ngo.string.hdr."*merchant.MerchantGoods"   p  >go.weak.type.**"".MerchantGoods   €  "runtime.zerovalue     *type."".MerchantGoods   ş*runtime.gcbits.c89002   È şLgo.string.hdr."merchant.MerchantGoods"                       Dgo.string."merchant.MerchantGoods"   şDgo.string."merchant.MerchantGoods" 0  .merchant.MerchantGoods  ş4go.string.hdr."MerchantId"             
+          ,go.string."MerchantId"   ş,go.string."MerchantId"    MerchantId  ş>go.string.hdr."PercentDiscount"                       6go.string."PercentDiscount"   ş6go.string."PercentDiscount"     PercentDiscount  ş2go.string.hdr."AvailFrom"             	          *go.string."AvailFrom"   ş*go.string."AvailFrom"    AvailFrom  ş.go.string.hdr."AvailTo"                       &go.string."AvailTo"   ş&go.string."AvailTo"   AvailTo  ş*go.string.hdr."Promo"                       "go.string."Promo"   ş"go.string."Promo"   Promo  ş,go.string.hdr."Status"                       $go.string."Status"   ş$go.string."Status"   Status  ş2go.string.hdr."UnitPrice"             	          *go.string."UnitPrice"   ş*go.string."UnitPrice"    UnitPrice  ş6go.string.hdr."Goodservice"                       .go.string."Goodservice"   ş.go.string."Goodservice"    Goodservice  ş:go.string.hdr."MerchantGoods"                       2go.string."MerchantGoods"   ş2go.string."MerchantGoods"    MerchantGoods  ş*type."".MerchantGoods  à  à¨              Ä«                                                         	       	                                                                               @                                       H                                       P                                       h                                       €                                       ˆ                                       ˜                                                                                       60  4type..alg."".MerchantGoods   @  *runtime.gcbits.c89002   P  Lgo.string.hdr."merchant.MerchantGoods"   p  ,type.*"".MerchantGoods   €  "runtime.zerovalue   À *type."".MerchantGoods   à  \type.xtremepay.com/backoffice/models.BaseModel     4go.string.hdr."MerchantId"   °  type.int   à  >go.string.hdr."PercentDiscount"   €  type.float32   °  2go.string.hdr."AvailFrom"   Ğ  type.time.Time   €  .go.string.hdr."AvailTo"      type.time.Time   Ğ  *go.string.hdr."Promo"   ğ  type.bool      ,go.string.hdr."Status"   À  type.string   ğ  2go.string.hdr."UnitPrice"     type.float32   À  6go.string.hdr."Goodservice"   à  type.int   ` *type."".MerchantGoods     :go.string.hdr."MerchantGoods"      "go.importpath."".   °à *type."".MerchantGoods   ş.go.string.hdr."runtime"                       &go.string."runtime"   ş&go.string."runtime"   runtime  ş,go.importpath.runtime.                       &go.string."runtime"   ş^go.string.hdr."xtremepay.com/backoffice/models"                       Vgo.string."xtremepay.com/backoffice/models"   şVgo.string."xtremepay.com/backoffice/models" @  @xtremepay.com/backoffice/models  ş\go.importpath.xtremepay.com/backoffice/models.                       Vgo.string."xtremepay.com/backoffice/models"   ş(go.string.hdr."time"                        go.string."time"   ş go.string."time"   
+time  ş&go.importpath.time.                        go.string."time"   ş2type..hash."".MerchantÂ·f              ,type..hash."".Merchant   ş.type..eq."".MerchantÂ·f              (type..eq."".Merchant   ş<type..hash."".MerchantGoodsÂ·f              6type..hash."".MerchantGoods   ş8type..eq."".MerchantGoodsÂ·f              2type..eq."".MerchantGoods   ş"runtime.zerovalue      ÿÿgo13ld 

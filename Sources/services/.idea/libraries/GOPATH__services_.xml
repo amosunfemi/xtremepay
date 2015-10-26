@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="GOPATH &lt;services&gt;">
+    <CLASSES>
+      <root url="file:///usr/local/Cellar/go/1.5.1/libexec/src" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="file:///usr/local/Cellar/go/1.5.1/libexec" />
+    </SOURCES>
+  </library>
+</component>

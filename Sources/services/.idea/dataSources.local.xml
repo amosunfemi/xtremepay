@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="dataSourceStorageLocal">
+    <data-source name="PostgreSQL - xtremepay_dev1@localhost" uuid="eb231418-dbbe-4b19-85b3-2a505832b1b7">
+      <secret-storage>master_key</secret-storage>
+      <user-name>postgres</user-name>
+      <schema-pattern>xtremepay_dev1.pg_catalog xtremepay_dev1.public</schema-pattern>
+      <default-schemas>xtremepay_dev1.public</default-schemas>
+    </data-source>
+  </component>
+</project>
