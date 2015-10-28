@@ -92,9 +92,15 @@ type PersonIDType struct {
 	models.BaseModel
 	PersonID       int       `json:"PersonID"`
 	IDType         int       `json:"IDType"`
+	IDNumber       string    `json:"IDNumber"`
 	DateIssued     time.Time `json:"DateIssued"`
 	ExpiryDate     time.Time `json:"ExpiryDate"`
 	ScannedPicture []byte    `json:"ScannedPicture"`
+}
+
+// Validate ...
+func (pid PersonIDType) Validate(req *http.Request, errs binding.Errors) binding.Errors {
+	return errs
 }
 
 // TableName ...
@@ -117,6 +123,10 @@ func (pid *PersonIDType) FieldMap(req *http.Request) binding.FieldMap {
 			Form:     "DateIssued",
 			Required: true,
 		},
+		&pid.IDNumber: binding.Field{
+			Form:     "IDNumber",
+			Required: true,
+		},
 	}
 }
 
@@ -132,6 +142,11 @@ type Addresses struct {
 	CountryID         int    `json:"CountryID"`
 	PersonID          int    `json:"PersonID"`
 	CompanyEntitiesID int    `json:"CompanyEntitiesID"`
+}
+
+// Validate ...
+func (add Addresses) Validate(req *http.Request, errs binding.Errors) binding.Errors {
+	return errs
 }
 
 // TableName ...
@@ -172,6 +187,11 @@ type Contacts struct {
 	FacebookID        string `json:"FacebookID"`
 	PersonID          int    `json:"PersonID"`
 	CompanyEntitiesID int    `json:"CompanyEntitiesID"`
+}
+
+// Validate ...
+func (con Contacts) Validate(req *http.Request, errs binding.Errors) binding.Errors {
+	return errs
 }
 
 // TableName ...

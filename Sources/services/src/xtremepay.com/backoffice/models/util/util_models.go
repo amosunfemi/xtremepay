@@ -71,10 +71,12 @@ func (r *RegionState) FieldMap(req *http.Request) binding.FieldMap {
 	}
 }
 
+// TableName ...
 func (r RegionState) TableName() string {
 	return "xtut_region_state"
 }
 
+// Validate ...
 func (r RegionState) Validate(req *http.Request, errs binding.Errors) binding.Errors {
 	if r.CountryID == 0 {
 		errs = append(errs, binding.Error{
@@ -101,6 +103,7 @@ type Towns struct {
 	Name          string `json:"Name"`
 }
 
+// FieldMap ...
 func (t *Towns) FieldMap(req *http.Request) binding.FieldMap {
 	return binding.FieldMap{
 		&t.RegionStateID: "RegionStateID",
@@ -108,10 +111,12 @@ func (t *Towns) FieldMap(req *http.Request) binding.FieldMap {
 	}
 }
 
+// TableName ...
 func (t Towns) TableName() string {
 	return "xtut_town"
 }
 
+// Validate ...
 func (t Towns) Validate(req *http.Request, errs binding.Errors) binding.Errors {
 	if t.RegionStateID == 0 {
 		errs = append(errs, binding.Error{
@@ -141,6 +146,7 @@ type Currency struct {
 	DecimalPlace int    `json:"DecimalPlace"`
 }
 
+// FieldMap ...
 func (c *Currency) FieldMap(req *http.Request) binding.FieldMap {
 	return binding.FieldMap{
 		&c.CountryID: binding.Field{
@@ -158,10 +164,12 @@ func (c *Currency) FieldMap(req *http.Request) binding.FieldMap {
 	}
 }
 
+// TableName ...
 func (c Currency) TableName() string {
 	return "xtut_currencies"
 }
 
+// Validate ...
 func (c Currency) Validate(req *http.Request, errs binding.Errors) binding.Errors {
 	if c.CountryID == 0 {
 		errs = append(errs, binding.Error{

@@ -3,7 +3,6 @@ package merchant
 import (
 	"fmt"
 	"net/http"
-	"reflect"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -22,7 +21,133 @@ type PersonController struct {
 	HTTPUtilDunc utility.HTTPUtilityFunctions
 }
 
-// CreatePerson ... create new country
+// genericSearch ... Search for any type
+func (c PersonController) genericSearch(entity interface{}, req *http.Request) (interface{}, error) {
+	queryDict, err := c.HTTPUtilDunc.DecodeHTTPBody(req)
+	if err == nil {
+		query := c.Db.Where(queryDict).Find(entity)
+		if query.Error == gorm.RecordNotFound {
+			return entity, query.Error
+		}
+		return entity, nil
+	}
+	return entity, nil
+}
+
+// FetchPersonAddresses ... Fetch all the regions/state of a country
+func (c PersonController) FetchPersonAddresses(res http.ResponseWriter, req *http.Request) {
+	r := render.New(render.Options{})
+	vars := mux.Vars(req)
+	personID := vars["person_id"]
+
+	// find in the database
+	addresses := []models.Addresses{}
+
+	query := c.Db.Where("person_id = ?", personID).Find(&addresses)
+
+	if query.Error == gorm.RecordNotFound {
+		r.JSON(res, 404, query.Error.Error())
+	} else if query.Error == nil {
+		r.JSON(res, 200, addresses)
+	} else {
+		fmt.Println(query.Error.Error())
+		panic(query.Error)
+	}
+}
+
+// SearchAddressGeneric ... Search Country by any field
+func (c PersonController) SearchAddressGeneric(res http.ResponseWriter, req *http.Request) {
+	r := render.New(render.Options{})
+
+	address := models.Addresses{}
+	addresses, err := c.genericSearch(&address, req)
+	if err == nil {
+		r.JSON(res, 200, addresses)
+		return
+	}
+	r.JSON(res, 400, err.Error())
+}
+
+// SearchContactGeneric ... Search Country by any field
+func (c PersonController) SearchContactGeneric(res http.ResponseWriter, req *http.Request) {
+	r := render.New(render.Options{})
+
+	contact := models.Contacts{}
+	contacts, err := c.genericSearch(&contact, req)
+	if err == nil {
+		r.JSON(res, 200, contacts)
+		return
+	}
+	r.JSON(res, 400, err.Error())
+}
+
+// SearchPersonGeneric ... Search Country by any field
+func (c PersonController) SearchPersonGeneric(res http.ResponseWriter, req *http.Request) {
+	r := render.New(render.Options{})
+
+	person := []models.Person{}
+	people, err := c.genericSearch(&person, req)
+	if err == nil {
+		r.JSON(res, 200, people)
+		return
+	}
+	r.JSON(res, 400, err.Error())
+}
+
+// CreatePersonIDType ... add new contact to a person
+func (c PersonController) CreatePersonIDType(res http.ResponseWriter, req *http.Request) {
+	r := render.New(render.Options{})
+	personIDType := new(models.PersonIDType)
+	errs := binding.Bind(req, personIDType)
+	if errs.Handle(res) {
+		r.JSON(res, 422, errs.Error())
+		return
+	}
+	bindingErr := personIDType.Validate(req, errs)
+	if bindingErr != nil {
+		r.JSON(res, 422, bindingErr.Error())
+		return
+	}
+	p := models.PersonIDType{c.BaseModel, personIDType.PersonID, personIDType.IDType, personIDType.IDNumber, personIDType.DateIssued, personIDType.ExpiryDate, personIDType.ScannedPicture}
+	tx := c.Db.Begin()
+	if err := tx.Create(&p).Error; err != nil {
+		tx.Rollback()
+		panic(err)
+	}
+	tx.Commit()
+	r.JSON(res, 200, p)
+}
+
+// CreateContact ... add new contact to a person
+func (c PersonController) CreateContact(res http.ResponseWriter, req *http.Request) {
+	r := render.New(render.Options{})
+	contact := new(models.Contacts)
+	errs := binding.Bind(req, contact)
+	if errs.Handle(res) {
+		r.JSON(res, 422, errs.Error())
+		return
+	}
+	bindingErr := contact.Validate(req, errs)
+	if bindingErr != nil {
+		r.JSON(res, 422, bindingErr.Error())
+		return
+	}
+
+	p := models.Contacts{c.BaseModel, contact.PhoneNo, contact.PhoneNo2, contact.PhoneNo3, contact.Email, contact.Website,
+		contact.FacebookID, contact.PersonID, contact.CompanyEntitiesID}
+
+	tx := c.Db.Begin()
+
+	if err := tx.Create(&p).Error; err != nil {
+		tx.Rollback()
+		panic(err)
+	}
+	tx.Commit()
+	// render response
+	r.JSON(res, 200, p)
+}
+
+// CreatePerson ... create new person
 func (c PersonController) CreatePerson(res http.ResponseWriter, req *http.Request) {
 	r := render.New(render.Options{})
 	person := new(models.Person)
@@ -54,25 +179,26 @@ func (c PersonController) CreatePerson(res http.ResponseWriter, req *http.Reques
 	r.JSON(res, 200, p)
 }
 
-// CreateRegion ... create new region
-func (c PersonController) CreateRegion(res http.ResponseWriter, req *http.Request) {
+// CreateAddress ... add new address to a person
+func (c PersonController) CreateAddress(res http.ResponseWriter, req *http.Request) {
 	r := render.New(render.Options{})
-	region := new(models.RegionState)
-	errs := binding.Bind(req, region)
+	address := new(models.Addresses)
+	errs := binding.Bind(req, address)
 	if errs.Handle(res) {
 		r.JSON(res, 422, errs.Error())
 		return
 	}
 
-	bindingErr := region.Validate(req, errs)
+	bindingErr := address.Validate(req, errs)
 
 	if bindingErr != nil {
 		r.JSON(res, 422, bindingErr.Error())
 		return
 	}
-
 	// save to database
-	p := models.RegionState{c.BaseModel, region.Name, region.CountryID, region.Towns}
+
+	p := models.Addresses{c.BaseModel, address.AddressType, address.HouseNo, address.Street, address.Area, address.TownsID,
+		address.RegionStateID, address.CountryID, address.PersonID, address.CompanyEntitiesID}
 
 	tx := c.Db.Begin()
 
@@ -81,39 +207,6 @@ func (c PersonController) CreateRegion(res http.ResponseWriter, req *http.Reques
 		panic(err)
 	}
 	tx.Commit()
-
-	// render response
-	r.JSON(res, 200, p)
-}
-
-// CreateTown ... create new merchant
-func (c PersonController) CreateTown(res http.ResponseWriter, req *http.Request) {
-	r := render.New(render.Options{})
-	town := new(models.Towns)
-	errs := binding.Bind(req, town)
-	if errs.Handle(res) {
-		r.JSON(res, 422, errs.Error())
-		return
-	}
-
-	bindingErr := town.Validate(req, errs)
-
-	if bindingErr != nil {
-		r.JSON(res, 422, bindingErr.Error())
-		return
-	}
-
-	// save to database
-	p := models.Towns{c.BaseModel, town.RegionStateID, town.Name}
-
-	tx := c.Db.Begin()
-
-	if err := tx.Create(&p).Error; err != nil {
-		tx.Rollback()
-		panic(err)
-	}
-	tx.Commit()
-
 	// render response
 	r.JSON(res, 200, p)
 }
@@ -166,23 +259,18 @@ func (c PersonController) UpdateTown(res http.ResponseWriter, req *http.Request)
 	r := render.New(render.Options{})
 	vars := mux.Vars(req)
 	id := vars["id"]
-
 	town := new(models.Towns)
 	errs := binding.Bind(req, town)
 	if errs.Handle(res) {
 		r.JSON(res, 422, errs.Error())
 		return
 	}
-
 	bindingErr := town.Validate(req, errs)
-
 	if bindingErr != nil {
 		r.JSON(res, 422, bindingErr.Error())
 		return
 	}
-
 	tx := c.Db.Begin()
-
 	twnExist := &models.Towns{}
 	query := tx.Where("id = ?", id).First(twnExist)
 	twnExist.Updatedat = time.Now()
@@ -210,27 +298,23 @@ func (c PersonController) UpdateRegion(res http.ResponseWriter, req *http.Reques
 	r := render.New(render.Options{})
 	vars := mux.Vars(req)
 	id := vars["id"]
-
 	region := new(models.RegionState)
 	errs := binding.Bind(req, region)
 	if errs.Handle(res) {
 		r.JSON(res, 422, errs.Error())
 		return
 	}
-
 	bindingErr := region.Validate(req, errs)
 
 	if bindingErr != nil {
 		r.JSON(res, 422, bindingErr.Error())
 		return
 	}
-
 	tx := c.Db.Begin()
 
 	regionExist := &models.RegionState{}
 	query := tx.Where("id = ?", id).First(regionExist)
 	regionExist.Updatedat = time.Now()
-
 	if query.Error == gorm.RecordNotFound {
 		r.JSON(res, 404, query.Error.Error())
 	} else if query.Error == nil {
@@ -311,21 +395,6 @@ func (c PersonController) SearchTown(res http.ResponseWriter, req *http.Request)
 		return
 	}
 	r.JSON(res, 400, err.Error())
-}
-
-// genericSearch ... Search for any type
-func (c PersonController) genericSearch(entity interface{}, req *http.Request) (interface{}, error) {
-	queryDict, err := c.HTTPUtilDunc.DecodeHTTPBody(req)
-	entities := []interface{}{entity}
-	if err == nil {
-		fmt.Println(reflect.TypeOf(entities))
-		query := c.Db.Where(queryDict).Find(entity)
-		if query.Error == gorm.RecordNotFound {
-			return entity, query.Error
-		}
-		return entity, nil
-	}
-	return entity, nil
 }
 
 // ShowCountry ... select a merchant by id

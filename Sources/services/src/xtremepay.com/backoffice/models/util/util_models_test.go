@@ -11,6 +11,7 @@ import (
 	. "xtremepay.com/backoffice"
 	. "xtremepay.com/backoffice/models"
 	. "xtremepay.com/backoffice/models/util"
+	. "xtremepay.com/backoffice/services"
 )
 
 var _ = Describe("UtilModels", func() {
@@ -20,12 +21,14 @@ var _ = Describe("UtilModels", func() {
 		serviceManager ServiceManager
 		dbConn         *gorm.DB
 		baseModel      BaseModel
+		utility        Utility
 
 		curr1 Currency
 		curr2 Currency
 	)
 
 	BeforeEach(func() {
+
 		baseModel = BaseModel{Status: "ACTIVE", Createdat: time.Now()}
 		country = Country{baseModel, "GHA", "GHANA",
 			[]RegionState{{baseModel, "GREATER ACCRA", 0, []Towns{{baseModel, 0, "ACCRA"}}},
@@ -36,7 +39,7 @@ var _ = Describe("UtilModels", func() {
 			{baseModel, "OGUN STATE", 0, []Towns{{baseModel, 0, "ABEOKUTA"}, {baseModel, 0, "IJEBU-ODE"}, {baseModel, 0, "SHAGAMU"}, {baseModel, 0, "SANGO-OTTA"}}}}}
 
 		curr1 = Currency{baseModel, 1, "288", "GHS", "GHANA CEDIS", 2}
-		curr2 = Currency{baseModel, 3, "566", "NGN", "NIGERIAN NAIRA", 2}
+		curr2 = Currency{baseModel, 2, "566", "NGN", "NIGERIAN NAIRA", 2}
 
 		viperConfig := viper.New()
 		serviceManager.ViperConfig = viperConfig
@@ -45,6 +48,7 @@ var _ = Describe("UtilModels", func() {
 		dbDetail := serviceManager.ViperConfig.GetStringMapString(fmt.Sprintf("service.datastore.%s", serviceMode))
 		db, err := serviceManager.InitDB(dbDetail)
 		dbConn = &db
+		utility = Utility{dbConn}
 		if err != nil {
 			Panic()
 		}
@@ -96,8 +100,6 @@ var _ = Describe("UtilModels", func() {
 				tx.Close()
 				Expect(curr2.ID).To(BeNumerically(">", 0))
 			})
-
 		})
-
 	})
 })

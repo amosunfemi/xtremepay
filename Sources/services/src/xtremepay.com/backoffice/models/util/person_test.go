@@ -1,6 +1,7 @@
 package util_test
 
 import (
+	"encoding/json"
 	"fmt"
 	"time"
 
@@ -32,8 +33,8 @@ var _ = Describe("Person", func() {
 		baseModel = BaseModel{Status: "ACTIVE", Createdat: time.Now()}
 		addresses = []Addresses{{baseModel, "HOME", "B58", "TSA-ADDO", "LA", 1, 1, 1, 0, 0}}
 		contacts = []Contacts{{baseModel, "+233240106094", "", "", "sunday.amosun@gmail.com", "", "", 0, 0}}
-		idtypes = []PersonIDType{{baseModel, 0, idType.ID, time.Now(), idtime, nil}}
 		idType = IDType{baseModel, "PASSPORT", "INTERNATION PASSPORT", "NIGERIAN IMMIGRATION"}
+		idtypes = []PersonIDType{{baseModel, 0, idType.ID, time.Now(), idtime, nil}}
 		person = Person{baseModel, "SUNDAY", "ADEFEMI", "AMOSUN", "MR", "MALE", "IT CONSULTANT", time.Now(), addresses,
 			contacts, idtypes, 2, 2}
 
@@ -47,6 +48,8 @@ var _ = Describe("Person", func() {
 		if err != nil {
 			fmt.Println(err.Error())
 		}
+		personJSON, _ := json.Marshal(&person)
+		fmt.Println(string(personJSON))
 
 	})
 
