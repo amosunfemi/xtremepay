@@ -34,6 +34,27 @@ func (c PersonController) genericSearch(entity interface{}, req *http.Request) (
 	return entity, nil
 }
 
+// FetchPersonContacts ... Fetch all the regions/state of a country
+func (c PersonController) FetchPersonContacts(res http.ResponseWriter, req *http.Request) {
+	r := render.New(render.Options{})
+	vars := mux.Vars(req)
+	personID := vars["person_id"]
+
+	// find in the database
+	contacts := []models.Contacts{}
+
+	query := c.Db.Where("person_id = ?", personID).Find(&contacts)
+
+	if query.Error == gorm.RecordNotFound {
+		r.JSON(res, 404, query.Error.Error())
+	} else if query.Error == nil {
+		r.JSON(res, 200, contacts)
+	} else {
+		fmt.Println(query.Error.Error())
+		panic(query.Error)
+	}
+}
+
 // FetchPersonAddresses ... Fetch all the regions/state of a country
 func (c PersonController) FetchPersonAddresses(res http.ResponseWriter, req *http.Request) {
 	r := render.New(render.Options{})
