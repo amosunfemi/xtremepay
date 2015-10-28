@@ -36,6 +36,8 @@ func (c Utility) Routing(router *mux.Router, apiprefix string) {
 	router.HandleFunc(apiprefix+"/contact/search", personController.SearchContactGeneric).Methods("POST")
 
 	router.HandleFunc(apiprefix+"/person/{person_id}/addresses", personController.FetchPersonAddresses).Methods("GET")
+	router.HandleFunc(apiprefix+"/person/{person_id}/contacts", personController.FetchPersonContacts).Methods("GET")
+	router.HandleFunc(apiprefix+"/person/{person_id}/ids", personController.FetchPersonContacts).Methods("GET")
 
 	//router.HandleFunc(apiprefix+"/person/search", personController.Create).Methods("POST")
 	//router.HandleFunc(apiprefix+"/person/{id}", personController.Show).Methods("GET")
