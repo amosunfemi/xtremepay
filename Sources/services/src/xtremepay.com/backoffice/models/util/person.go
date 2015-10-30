@@ -11,18 +11,18 @@ import (
 //Person ... details
 type Person struct {
 	models.BaseModel
-	FirstName            string         `json:"FirstName"`
+	FirstName            string         `json:"FirstName" sql:"not null"`
 	MiddleName           string         `json:"MiddleName"`
-	LastName             string         `json:"LastName"`
+	LastName             string         `json:"LastName" sql:"not null"`
 	Title                string         `json:"Title"`
-	Gender               string         `json:"Gender"`
+	Gender               string         `json:"Gender" sql:"not null"`
 	Occupation           string         `json:"Occupation"`
 	DateOfBirth          time.Time      `json:"DateOfBirth"`
 	Addresses            []Addresses    `json:"Addresses"`
 	Contacts             []Contacts     `json:"Contacts"`
 	PersonIDType         []PersonIDType `json:"PersonIDType"`
-	CountryOfOriginID    int            `json:"CountryOfOriginID"`
-	CountryOfResidenceID int            `json:"CountryOfResidenceID"`
+	CountryOfOriginID    int            `json:"CountryOfOriginID" sql:"not null;unique"`
+	CountryOfResidenceID int            `json:"CountryOfResidenceID" sql:"not null;unique"`
 }
 
 //TableName ...
@@ -59,8 +59,8 @@ func (p Person) Validate(req *http.Request, errs binding.Errors) binding.Errors 
 // IDType ... Different kind of ID that a person can be identify with
 type IDType struct {
 	models.BaseModel
-	Name        string `json:"Name"`
-	Description string `json:"Description"`
+	Name        string `json:"Name" sql:"not null"`
+	Description string `json:"Description" sql:"not null"`
 	IssueBy     string `json:"IssueBy"`
 }
 
@@ -90,12 +90,13 @@ func (id *IDType) FieldMap(req *http.Request) binding.FieldMap {
 // PersonIDType ... Person to IdType mapping
 type PersonIDType struct {
 	models.BaseModel
-	PersonID       int       `json:"PersonID"`
-	IDType         int       `json:"IDType"`
-	IDNumber       string    `json:"IDNumber"`
+	PersonID       int       `json:"PersonID" sql:"not null"`
+	IDType         int       `json:"IDType" sql:"not null"`
+	IDNumber       string    `json:"IDNumber" sql:"not null"`
 	DateIssued     time.Time `json:"DateIssued"`
 	ExpiryDate     time.Time `json:"ExpiryDate"`
 	ScannedPicture []byte    `json:"ScannedPicture"`
+	IDTypes        IDType    `gorm:"one2one:xtut_id_type;"`
 }
 
 // Validate ...
@@ -179,7 +180,7 @@ func (add *Addresses) FieldMap(req *http.Request) binding.FieldMap {
 // Contacts ... Person/Company contact
 type Contacts struct {
 	models.BaseModel
-	PhoneNo           string `json:"PhoneNo"`
+	PhoneNo           string `json:"PhoneNo" sql:"not null"`
 	PhoneNo2          string `json:"PhoneNo2"`
 	PhoneNo3          string `json:"PhoneNo3"`
 	Email             string `json:"Email"`

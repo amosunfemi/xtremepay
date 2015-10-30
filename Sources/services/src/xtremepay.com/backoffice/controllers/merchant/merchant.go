@@ -3,12 +3,13 @@ package merchant
 import (
 	"net/http"
 
+	"fmt"
+
 	"github.com/albrow/forms"
 	"github.com/gorilla/mux"
 	"github.com/jinzhu/gorm"
 	"github.com/unrolled/render"
 	models "xtremepay.com/backoffice/models/merchant"
-	"fmt"
 )
 
 //Controller ...
@@ -62,9 +63,9 @@ func (c Controller) Show(res http.ResponseWriter, req *http.Request) {
 
 	if query.Error == gorm.RecordNotFound {
 		r.JSON(res, 400, query.Error)
-	} else if query.Error == nil{
+	} else if query.Error == nil {
 		r.JSON(res, 200, merchant)
-	} else{
+	} else {
 		fmt.Println(query.Error.Error())
 		panic(query.Error)
 	}

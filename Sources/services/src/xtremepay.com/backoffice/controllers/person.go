@@ -1,4 +1,4 @@
-package merchant
+package controllers
 
 import (
 	"fmt"
@@ -32,6 +32,28 @@ func (c PersonController) genericSearch(entity interface{}, req *http.Request) (
 		return entity, nil
 	}
 	return entity, nil
+}
+
+// FetchPersonIDs ... Fetch all the regions/state of a country
+func (c PersonController) FetchPersonIDs(res http.ResponseWriter, req *http.Request) {
+	r := render.New(render.Options{})
+	vars := mux.Vars(req)
+	personID := vars["person_id"]
+
+	// find in the database
+	ids := models.PersonIDType{}
+	idTypes := models.IDType{}
+	query := c.Db.Where("person_id = ?", personID).Find(&ids)
+	c.Db.Model(&ids).Related(&idTypes, "IDType")
+	ids.IDTypes = idTypes
+	if query.Error == gorm.RecordNotFound {
+		r.JSON(res, 404, query.Error.Error())
+	} else if query.Error == nil {
+		r.JSON(res, 200, ids)
+	} else {
+		fmt.Println(query.Error.Error())
+		panic(query.Error)
+	}
 }
 
 // FetchPersonContacts ... Fetch all the regions/state of a country
@@ -120,6 +142,7 @@ func (c PersonController) CreatePersonIDType(res http.ResponseWriter, req *http.
 	r := render.New(render.Options{})
 	personIDType := new(models.PersonIDType)
 	errs := binding.Bind(req, personIDType)
+	idTypes := models.IDType{}
 	if errs.Handle(res) {
 		r.JSON(res, 422, errs.Error())
 		return
@@ -129,7 +152,7 @@ func (c PersonController) CreatePersonIDType(res http.ResponseWriter, req *http.
 		r.JSON(res, 422, bindingErr.Error())
 		return
 	}
-	p := models.PersonIDType{c.BaseModel, personIDType.PersonID, personIDType.IDType, personIDType.IDNumber, personIDType.DateIssued, personIDType.ExpiryDate, personIDType.ScannedPicture}
+	p := models.PersonIDType{c.BaseModel, personIDType.PersonID, personIDType.IDType, personIDType.IDNumber, personIDType.DateIssued, personIDType.ExpiryDate, personIDType.ScannedPicture, idTypes}
 	tx := c.Db.Begin()
 	if err := tx.Create(&p).Error; err != nil {
 		tx.Rollback()

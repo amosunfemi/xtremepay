@@ -19,6 +19,7 @@ type Account struct {
 	CurrentBalance      float32
 }
 
+// TableName ...
 func (c Account) TableName() string {
 	return "xtac_accounts"
 }
@@ -30,6 +31,7 @@ type AccountCategory struct {
 	Description string
 }
 
+// TableName ...
 func (c AccountCategory) TableName() string {
 	return "xtac_account_category"
 }
@@ -43,6 +45,7 @@ type AccountFundSource struct {
 	Provider    string //Bank, MNO, VISA, GSD etc
 }
 
+// TableName ...
 func (c AccountFundSource) TableName() string {
 	return "xtac_account_fund_source"
 }
@@ -55,8 +58,10 @@ type AccountLimit struct {
 	TransLimit        float32
 	TransPerDayLimit  float32
 	TransPerMthLimit  float32
+	LimitPeriod       string
 }
 
+// TableName ...
 func (c AccountLimit) TableName() string {
 	return "xtac_account_limit"
 }
