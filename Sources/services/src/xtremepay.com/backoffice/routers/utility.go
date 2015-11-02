@@ -3,10 +3,8 @@ package routers
 import (
 	"time"
 
-	"github.com/codegangsta/negroni"
 	"github.com/gorilla/mux"
 	"github.com/jinzhu/gorm"
-	"xtremepay.com/backoffice/security/core/authentication"
 	utilFunc "xtremepay.com/backoffice/utility"
 
 	controllers "xtremepay.com/backoffice/controllers"
@@ -19,52 +17,13 @@ type Utility struct {
 	Db *gorm.DB
 }
 
-var baseModel = base.BaseModel{Status: "ACTIVE", Createdat: time.Now()}
-var httpUtilFunc = utilFunc.HTTPUtilityFunctions{}
-
-/*
-func SetAuthenticationRoutes(router *mux.Router) *mux.Router {
-	router.HandleFunc("/token-auth", controllers.Login).Methods("POST")
-	router.Handle("/refresh-token-auth",
-		negroni.New(
-			negroni.HandlerFunc(authentication.RequireTokenAuthentication),
-			negroni.HandlerFunc(controllers.RefreshToken),
-		)).Methods("GET")
-	router.Handle("/logout",
-		negroni.New(
-			negroni.HandlerFunc(authentication.RequireTokenAuthentication),
-			negroni.HandlerFunc(controllers.Logout),
-		)).Methods("GET")
-	return router
-}*/
-
 // Routing ... list of routing services
 func (c Utility) Routing(router *mux.Router, apiprefix string) {
+	baseModel := base.BaseModel{Status: "ACTIVE", Createdat: time.Now()}
+	httpUtilFunc := utilFunc.HTTPUtilityFunctions{}
 	personController := controllers.PersonController{c.Db, baseModel, httpUtilFunc}
 	utilController := controllers.CommonController{c.Db, baseModel, httpUtilFunc}
-
-	router.HandleFunc("/token-auth", controllers.Login).Methods("POST")
-
 	// Person url mappings
-	router.Handle("/refresh-token-auth",
-		negroni.New(
-			negroni.HandlerFunc(authentication.RequireTokenAuthentication),
-			negroni.HandlerFunc(controllers.RefreshToken),
-		)).Methods("GET")
-	router.Handle("/logout",
-		negroni.New(
-			negroni.HandlerFunc(authentication.RequireTokenAuthentication),
-			negroni.HandlerFunc(controllers.Logout),
-		)).Methods("GET")
-
-	router.Handle(apiprefix+"/person/{person_id}/addresses",
-		negroni.New(
-			negroni.HandlerFunc(authentication.RequireTokenAuthentication),
-			negroni.HandlerFunc(personController.FetchPersonAddresses),
-		)).Methods("GET")
-
-	//router.HandleFunc(apiprefix+"/person/{person_id}/addresses", personController.FetchPersonAddresses).Methods("GET")
-
 	router.HandleFunc(apiprefix+"/person", personController.CreatePerson).Methods("POST")
 	router.HandleFunc(apiprefix+"/address", personController.CreateAddress).Methods("POST")
 	router.HandleFunc(apiprefix+"/contact", personController.CreateContact).Methods("POST")

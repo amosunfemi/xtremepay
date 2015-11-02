@@ -1,6 +1,11 @@
 package util
 
-import "xtremepay.com/backoffice/models"
+import (
+	"net/http"
+
+	"github.com/mholt/binding"
+	"xtremepay.com/backoffice/models"
+)
 
 // User ...
 type User struct {
@@ -26,44 +31,26 @@ func (c User) TableName() string {
 	return "xtut_user"
 }
 
-// Login ...
-/*func Login(requestUser *User) (int, []byte) {
-	authBackend := authentication.InitJWTAuthenticationBackend()
-
-	if authBackend.Authenticate(requestUser) {
-		token, err := authBackend.GenerateToken(requestUser.UUID)
-		if err != nil {
-			return http.StatusInternalServerError, []byte("")
-		} else {
-			response, _ := json.Marshal(parameters.TokenAuthentication{token})
-			return http.StatusOK, response
-		}
+// FieldMap ...
+func (c *User) FieldMap(req *http.Request) binding.FieldMap {
+	return binding.FieldMap{
+		&c.Username: binding.Field{
+			Form:     "Username",
+			Required: true,
+		},
+		&c.Email: binding.Field{
+			Form:     "Email",
+			Required: true,
+		},
+		&c.PersonID: binding.Field{
+			Form:     "PersonID",
+			Required: true,
+		},
 	}
-
-	return http.StatusUnauthorized, []byte("")
 }
 
-func RefreshToken(requestUser *User) []byte {
-	authBackend := authentication.InitJWTAuthenticationBackend()
-	token, err := authBackend.GenerateToken(requestUser.UUID)
-	if err != nil {
-		panic(err)
-	}
-	response, err := json.Marshal(parameters.TokenAuthentication{token})
-	if err != nil {
-		panic(err)
-	}
-	return response
-}
+// Validate ...
+func (c User) Validate(req *http.Request, errs binding.Errors) binding.Errors {
 
-func Logout(req *http.Request) error {
-	authBackend := authentication.InitJWTAuthenticationBackend()
-	tokenRequest, err := jwt.ParseFromRequest(req, func(token *jwt.Token) (interface{}, error) {
-		return authBackend.PublicKey, nil
-	})
-	if err != nil {
-		return err
-	}
-	tokenString := req.Header.Get("Authorization")
-	return authBackend.Logout(tokenString, tokenRequest)
-}*/
+	return errs
+}

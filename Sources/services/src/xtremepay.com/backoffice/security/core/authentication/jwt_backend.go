@@ -5,6 +5,7 @@ import (
 	"crypto/rsa"
 	"crypto/x509"
 	"encoding/pem"
+	"fmt"
 	"os"
 	"time"
 
@@ -97,7 +98,8 @@ func (backend *JWTAuthenticationBackend) IsInBlacklist(token string) bool {
 }
 
 func getPrivateKey() *rsa.PrivateKey {
-	privateKeyFile, err := os.Open(settings.Get().PrivateKeyPath)
+	fmt.Println(settings.Get().PrivateKeyPath)
+	privateKeyFile, err := os.Open("/Users/amosunsunday/Documents/Official/xtremepay/Sources/services/src/xtremepay.com/backoffice/security/settings/keys/private_key")
 	if err != nil {
 		panic(err)
 	}
@@ -123,7 +125,9 @@ func getPrivateKey() *rsa.PrivateKey {
 }
 
 func getPublicKey() *rsa.PublicKey {
-	publicKeyFile, err := os.Open(settings.Get().PublicKeyPath)
+	//settings.Get().PublicKeyPath
+	///Users/amosunsunday/Documents/Official/xtremepay/Sources/services/src/xtremepay.com/backoffice/security/settings/keys/public_key.pub
+	publicKeyFile, err := os.Open("/Users/amosunsunday/Documents/Official/xtremepay/Sources/services/src/xtremepay.com/backoffice/security/settings/keys/public_key.pub")
 	if err != nil {
 		panic(err)
 	}

@@ -1,9 +1,9 @@
 {
   "service": {
-    "name": "utility",
-    "port": 3003,
+    "name": "security",
+    "port": 3004,
     "mode":"dev",
-    "apiprefix":"/xtremepay/v1.0/utility",
+    "apiprefix":"/xtremepay/v1.0/security",
     "datastore": {
       "dev": {
         "host": "127.0.0.1",

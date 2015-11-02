@@ -32,12 +32,14 @@ func Init() {
 }
 
 func LoadSettingsByEnv(env string) {
+
 	content, err := ioutil.ReadFile(environments[env])
 	if err != nil {
 		fmt.Println("Error while reading config file", err)
 	}
 	settings = Settings{}
 	jsonErr := json.Unmarshal(content, &settings)
+	fmt.Println(content)
 	if jsonErr != nil {
 		fmt.Println("Error while parsing config file", jsonErr)
 	}

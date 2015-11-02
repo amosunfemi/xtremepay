@@ -13,7 +13,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/jinzhu/gorm"
 	"github.com/spf13/viper"
-	"xtremepay.com/backoffice/services"
+	"xtremepay.com/backoffice/routers"
 )
 
 //ServiceManager ... The main service coordinator
@@ -90,7 +90,7 @@ func (c ServiceManager) LoadService() string {
 
 		db, Err := c.InitDB(dbDetail)
 		if Err == nil {
-			merchantService := services.Merchant{&db}
+			merchantService := routers.Merchant{&db}
 			merchantService.MigrateDB()
 			merchantService.Routing(c.Router, apiPrefix)
 			c.NegroniServer.Use(recovery.JSONRecovery(true))
@@ -106,7 +106,23 @@ func (c ServiceManager) LoadService() string {
 
 		db, Err := c.InitDB(dbDetail)
 		if Err == nil {
-			utilityService := services.Utility{&db}
+			utilityService := routers.Utility{&db}
+			utilityService.MigrateDB()
+			utilityService.Routing(c.Router, apiPrefix)
+			c.NegroniServer.Use(recovery.JSONRecovery(true))
+			c.NegroniServer.UseHandler(c.Router)
+			c.NegroniServer.Run(fmt.Sprintf(":%d", port))
+			return "service started"
+		} else {
+			fmt.Println(Err.Error())
+			return Err.Error()
+		}
+
+	case "security":
+
+		db, Err := c.InitDB(dbDetail)
+		if Err == nil {
+			userService := routers.User{&db}
 			utilityService.MigrateDB()
 			utilityService.Routing(c.Router, apiPrefix)
 			c.NegroniServer.Use(recovery.JSONRecovery(true))
