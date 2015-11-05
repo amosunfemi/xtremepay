@@ -9,6 +9,7 @@ import (
 	"xtremepay.com/backoffice/security/core/authentication"
 )
 
+// Login ...
 func Login(requestUser *models.User) (int, []byte) {
 	authBackend := authentication.InitJWTAuthenticationBackend()
 
@@ -21,10 +22,10 @@ func Login(requestUser *models.User) (int, []byte) {
 			return http.StatusOK, response
 		}
 	}
-
 	return http.StatusUnauthorized, []byte("")
 }
 
+// RefreshToken ...
 func RefreshToken(requestUser *models.User) []byte {
 	authBackend := authentication.InitJWTAuthenticationBackend()
 	token, err := authBackend.GenerateToken(requestUser.UUID)
@@ -38,6 +39,7 @@ func RefreshToken(requestUser *models.User) []byte {
 	return response
 }
 
+// Logout ...
 func Logout(req *http.Request) error {
 	authBackend := authentication.InitJWTAuthenticationBackend()
 	tokenRequest, err := jwt.ParseFromRequest(req, func(token *jwt.Token) (interface{}, error) {
