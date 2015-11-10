@@ -27,13 +27,13 @@ func (c UserRouter) Routing(router *mux.Router, apiprefix string) {
 
 	// User url mappings
 	router.HandleFunc(apiprefix+"/user", userController.CreateUser).Methods("POST")
-	router.HandleFunc("/token-auth", controllers.Login).Methods("POST")
-	router.Handle("/refresh-token-auth",
+	router.HandleFunc(apiprefix+"/token-auth", controllers.Login).Methods("POST")
+	router.Handle(apiprefix+"/refresh-token-auth",
 		negroni.New(
 			negroni.HandlerFunc(authentication.RequireTokenAuthentication),
 			negroni.HandlerFunc(controllers.RefreshToken),
 		)).Methods("GET")
-	router.Handle("/logout",
+	router.Handle(apiprefix+"/logout",
 		negroni.New(
 			negroni.HandlerFunc(authentication.RequireTokenAuthentication),
 			negroni.HandlerFunc(controllers.Logout),
@@ -45,6 +45,6 @@ func (c UserRouter) Routing(router *mux.Router, apiprefix string) {
 func (c UserRouter) MigrateDB() {
 	c.Db.AutoMigrate(&utilmodels.User{})
 	c.Db.Model(&utilmodels.User{}).AddForeignKey("person_id", "xtut_person(id)", "RESTRICT", "RESTRICT")
-	c.Db.Model(&utilmodels.User{}).AddUniqueIndex("idx_username", "user_name")
+	c.Db.Model(&utilmodels.User{}).AddUniqueIndex("idx_username", "username")
 	c.Db.Model(&utilmodels.User{}).AddUniqueIndex("idx_email", "email")
 }

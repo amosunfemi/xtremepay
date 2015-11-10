@@ -41,7 +41,7 @@ func main() {
 	n.Use(sessions.Sessions("my_session", store))
 
 	serviceManager := ServiceManager{router, n, viperConfig}
-	serviceManager.LoadConfig("config_utility.json")
+	serviceManager.LoadConfig("config_security.json")
 	serviceManager.LoadService()
 
 }
@@ -90,7 +90,7 @@ func (c ServiceManager) LoadService() string {
 
 		db, Err := c.InitDB(dbDetail)
 		if Err == nil {
-			merchantService := routers.Merchant{&db}
+			merchantService := routers.MerchantRouter{&db}
 			merchantService.MigrateDB()
 			merchantService.Routing(c.Router, apiPrefix)
 			c.NegroniServer.Use(recovery.JSONRecovery(true))
@@ -106,7 +106,7 @@ func (c ServiceManager) LoadService() string {
 
 		db, Err := c.InitDB(dbDetail)
 		if Err == nil {
-			utilityService := routers.Utility{&db}
+			utilityService := routers.UtilityRouter{&db}
 			utilityService.MigrateDB()
 			utilityService.Routing(c.Router, apiPrefix)
 			c.NegroniServer.Use(recovery.JSONRecovery(true))
@@ -122,12 +122,13 @@ func (c ServiceManager) LoadService() string {
 
 		db, Err := c.InitDB(dbDetail)
 		if Err == nil {
-			userService := routers.User{&db}
-			utilityService.MigrateDB()
-			utilityService.Routing(c.Router, apiPrefix)
+			userService := routers.UserRouter{&db}
+			userService.MigrateDB()
+			userService.Routing(c.Router, apiPrefix)
 			c.NegroniServer.Use(recovery.JSONRecovery(true))
 			c.NegroniServer.UseHandler(c.Router)
 			c.NegroniServer.Run(fmt.Sprintf(":%d", port))
+
 			return "service started"
 		} else {
 			fmt.Println(Err.Error())

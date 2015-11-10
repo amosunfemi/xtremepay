@@ -1,6 +1,9 @@
 package util
 
 import (
+	"net/http"
+
+	"github.com/mholt/binding"
 	"xtremepay.com/backoffice/models"
 )
 
@@ -20,8 +23,27 @@ type Account struct {
 }
 
 // TableName ...
-func (c Account) TableName() string {
+func (acct Account) TableName() string {
 	return "xtac_accounts"
+}
+
+// FieldMap ...
+func (acct *Account) FieldMap(req *http.Request) binding.FieldMap {
+	return binding.FieldMap{
+		&acct.AccountNo: binding.Field{
+			Form:     "AccountNo",
+			Required: true,
+		},
+		&acct.AccountCategoryID: binding.Field{
+			Form:     "AccountCategoryID",
+			Required: true,
+		},
+	}
+}
+
+// Validate ...
+func (acct Account) Validate(req *http.Request, errs binding.Errors) binding.Errors {
+	return errs
 }
 
 // AccountCategory ... Different account type, such as Individual, Merchant
@@ -40,7 +62,7 @@ func (c AccountCategory) TableName() string {
 // MobileMoney, Wallet, Cards, Bank Account etc
 type AccountFundSource struct {
 	models.BaseModel
-	Name        string
+	Name        string `sql:"not null;unique"`
 	Description string
 	Provider    string //Bank, MNO, VISA, GSD etc
 }
@@ -64,4 +86,40 @@ type AccountLimit struct {
 // TableName ...
 func (c AccountLimit) TableName() string {
 	return "xtac_account_limit"
+}
+
+// AccountFundMapping ...
+type AccountFundMapping struct {
+	models.BaseModel
+	Account           Account
+	AccountNo         string
+	FundSource        string
+	AccountFundSource AccountFundSource
+	MaxBalance        float32
+	MinBalance        float32
+	CurrentBalance    float32
+}
+
+// TableName ...
+func (acctMap AccountFundMapping) TableName() string {
+	return "xtac_account_limit"
+}
+
+// FieldMap ...
+func (acctMap *AccountFundMapping) FieldMap(req *http.Request) binding.FieldMap {
+	return binding.FieldMap{
+		&acct.AccountNo: binding.Field{
+			Form:     "AccountNo",
+			Required: true,
+		},
+		&acct.AccountCategoryID: binding.Field{
+			Form:     "AccountCategoryID",
+			Required: true,
+		},
+	}
+}
+
+// Validate ...
+func (acctMap AccountFundMapping) Validate(req *http.Request, errs binding.Errors) binding.Errors {
+	return errs
 }

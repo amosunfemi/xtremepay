@@ -4,3 +4,8 @@ package logic
 func InitiateTransfer() {
 
 }
+
+// PayMerchant ... Credit a merchant who is setup on the system
+func PayMerchant() {
+
+}

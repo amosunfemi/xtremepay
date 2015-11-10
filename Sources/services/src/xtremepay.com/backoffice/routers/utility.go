@@ -13,12 +13,12 @@ import (
 )
 
 // Utility ... The merchant service definition struct
-type Utility struct {
+type UtilityRouter struct {
 	Db *gorm.DB
 }
 
 // Routing ... list of routing services
-func (c Utility) Routing(router *mux.Router, apiprefix string) {
+func (c UtilityRouter) Routing(router *mux.Router, apiprefix string) {
 	baseModel := base.BaseModel{Status: "ACTIVE", Createdat: time.Now()}
 	httpUtilFunc := utilFunc.HTTPUtilityFunctions{}
 	personController := controllers.PersonController{c.Db, baseModel, httpUtilFunc}
@@ -64,7 +64,7 @@ func (c Utility) Routing(router *mux.Router, apiprefix string) {
 }
 
 // MigrateDB ... Create merchant table and other tables that need to work with merchant
-func (c Utility) MigrateDB() {
+func (c UtilityRouter) MigrateDB() {
 
 	c.Db.AutoMigrate(&utilmodels.Country{}, &utilmodels.RegionState{}, &utilmodels.Addresses{}, &utilmodels.Contacts{}, &utilmodels.Person{}, &utilmodels.IDType{},
 		&utilmodels.PersonIDType{}, &utilmodels.CompanyEntities{}, &utilmodels.Towns{}, &utilmodels.Currency{}, &utilmodels.User{})

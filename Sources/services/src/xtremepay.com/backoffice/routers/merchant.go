@@ -10,13 +10,13 @@ import (
 	"fmt"
 )
 
-// Merchant ... The merchant service definition struct
-type Merchant struct {
+// MerchantRouter ... The merchant service definition struct
+type MerchantRouter struct {
 	Db *gorm.DB
 }
 
 // Routing ... list of routing services
-func (c Merchant) Routing(router *mux.Router, apiprefix string) {
+func (c MerchantRouter) Routing(router *mux.Router, apiprefix string) {
 	merchant := merchant.Controller{c.Db}
 	fmt.Println(apiprefix)
 	// Merchant url mappings
@@ -34,7 +34,7 @@ func (c Merchant) Routing(router *mux.Router, apiprefix string) {
 }
 
 // MigrateDB ... Create merchant table and other tables that need to work with merchant
-func (c Merchant) MigrateDB() {
+func (c MerchantRouter) MigrateDB() {
 	c.Db.AutoMigrate(&merchantmodels.Merchant{}, &merchantmodels.Goods{}, &merchantmodels.GoodHist{})
 	c.Db.Model(&merchantmodels.Goods{}).AddForeignKey("merchant_id", "xtmc_merchant(id)", "RESTRICT", "RESTRICT")
 	c.Db.Model(&merchantmodels.GoodHist{}).AddForeignKey("goods_id", "xtmc_goods(id)", "RESTRICT", "RESTRICT")

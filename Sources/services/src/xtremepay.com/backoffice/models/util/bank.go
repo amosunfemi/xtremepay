@@ -1,6 +1,9 @@
 package util
 
 import (
+	"net/http"
+
+	"github.com/mholt/binding"
 	"xtremepay.com/backoffice/models"
 )
 
@@ -14,8 +17,28 @@ type Bank struct {
 	CountryID    int
 }
 
-func (c Bank) TableName() string {
+// TableName ...
+func (bank Bank) TableName() string {
 	return "xtut_bank"
+}
+
+// FieldMap ...
+func (bank *Bank) FieldMap(req *http.Request) binding.FieldMap {
+	return binding.FieldMap{
+		&bank.Code: binding.Field{
+			Form:     "Code",
+			Required: true,
+		},
+		&bank.Name: binding.Field{
+			Form:     "Name",
+			Required: true,
+		},
+	}
+}
+
+// Validate ...
+func (bank Bank) Validate(req *http.Request, errs binding.Errors) binding.Errors {
+	return errs
 }
 
 //BankDeposit ... Deposit received via banks
@@ -27,6 +50,30 @@ type BankDeposit struct {
 	AccountNo string
 }
 
-func (c BankDeposit) TableName() string {
+//TableName ...
+func (bnkDep BankDeposit) TableName() string {
 	return "xtut_bank_deposit"
+}
+
+// FieldMap ...
+func (bnkDep *BankDeposit) FieldMap(req *http.Request) binding.FieldMap {
+	return binding.FieldMap{
+		&bnkDep.BankID: binding.Field{
+			Form:     "BankID",
+			Required: true,
+		},
+		&bnkDep.Amount: binding.Field{
+			Form:     "Amount",
+			Required: true,
+		},
+		&bnkDep.AccountNo: binding.Field{
+			Form:     "AccountNo",
+			Required: true,
+		},
+	}
+}
+
+// Validate ...
+func (bnkDep BankDeposit) Validate(req *http.Request, errs binding.Errors) binding.Errors {
+	return errs
 }
