@@ -4,16 +4,25 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/jinzhu/gorm"
 	"github.com/mholt/binding"
 	"github.com/unrolled/render"
 
 	services "xtremepay.com/backoffice/logic"
+	base "xtremepay.com/backoffice/models"
 	models "xtremepay.com/backoffice/models/util"
+	"xtremepay.com/backoffice/utility"
 )
 
-// Login ...
-func Login(w http.ResponseWriter, r *http.Request) {
+//SecurityController ...
+type SecurityController struct {
+	Db           *gorm.DB
+	BaseModel    base.BaseModel
+	HTTPUtilDunc utility.HTTPUtilityFunctions
+}
 
+// Login ...
+func (sec *SecurityController) Login(w http.ResponseWriter, r *http.Request) {
 	render := render.New(render.Options{})
 	requestUser := new(models.User)
 	errs := binding.Bind(r, requestUser)
@@ -21,9 +30,16 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		render.JSON(w, 422, errs.Error())
 		return
 	}
-	responseStatus, token := services.Login(requestUser)
-	render.JSON(w, responseStatus, token)
+	user := models.User{}
+	query := sec.Db.Where("email = ? or username = ?", requestUser.Email, requestUser.Username).Find(&user)
 
+	if query.Error == gorm.RecordNotFound {
+		render.JSON(w, 404, query.Error.Error())
+	} else if query.Error == nil {
+		//User exist in database, confirm his password
+		responseStatus, token := services.Login(&user, requestUser.Password)
+		render.JSON(w, responseStatus, string(token))
+	}
 }
 
 // RefreshToken ...

@@ -59,7 +59,7 @@ func (c UtilityRouter) Routing(router *mux.Router, apiprefix string) {
 	router.HandleFunc(apiprefix+"/country/{id}", utilController.UpdateCountry).Methods("PUT", "PATCH")
 	router.HandleFunc(apiprefix+"/region/{id}", utilController.UpdateRegion).Methods("PUT", "PATCH")
 	router.HandleFunc(apiprefix+"/town/{id}", utilController.UpdateTown).Methods("PUT", "PATCH")
-	router.HandleFunc(apiprefix+"/token-auth", controllers.Login).Methods("POST")
+	//router.HandleFunc(apiprefix+"/token-auth", controllers.Login).Methods("POST")
 
 }
 
@@ -67,7 +67,7 @@ func (c UtilityRouter) Routing(router *mux.Router, apiprefix string) {
 func (c UtilityRouter) MigrateDB() {
 
 	c.Db.AutoMigrate(&utilmodels.Country{}, &utilmodels.RegionState{}, &utilmodels.Addresses{}, &utilmodels.Contacts{}, &utilmodels.Person{}, &utilmodels.IDType{},
-		&utilmodels.PersonIDType{}, &utilmodels.CompanyEntities{}, &utilmodels.Towns{}, &utilmodels.Currency{}, &utilmodels.User{})
+		&utilmodels.PersonIDType{}, &utilmodels.CompanyEntities{}, &utilmodels.Towns{}, &utilmodels.Currency{}, &utilmodels.User{}, &utilmodels.Language{})
 	c.Db.Model(&utilmodels.RegionState{}).AddForeignKey("country_id", "xtut_country(id)", "RESTRICT", "RESTRICT")
 	c.Db.Model(&utilmodels.Currency{}).AddForeignKey("country_id", "xtut_country(id)", "RESTRICT", "RESTRICT")
 	c.Db.Model(&utilmodels.Towns{}).AddForeignKey("region_state_id", "xtut_region_state(id)", "RESTRICT", "RESTRICT")
@@ -75,10 +75,10 @@ func (c UtilityRouter) MigrateDB() {
 	c.Db.Model(&utilmodels.Addresses{}).AddForeignKey("country_id", "xtut_country(id)", "RESTRICT", "RESTRICT")
 	c.Db.Model(&utilmodels.Addresses{}).AddForeignKey("towns_id", "xtut_town(id)", "RESTRICT", "RESTRICT")
 	c.Db.Model(&utilmodels.Addresses{}).AddForeignKey("person_id", "xtut_person(id)", "RESTRICT", "RESTRICT")
-	//c.Db.Model(&utilmodels.Addresses{}).AddForeignKey("company_entities_id", "xtut_company_entities(id)", "RESTRICT", "RESTRICT")
 	c.Db.Model(&utilmodels.Contacts{}).AddForeignKey("person_id", "xtut_person(id)", "RESTRICT", "RESTRICT")
 	c.Db.Model(&utilmodels.PersonIDType{}).AddForeignKey("id_type", "xtut_id_type(id)", "RESTRICT", "RESTRICT")
 	c.Db.Model(&utilmodels.User{}).AddForeignKey("person_id", "xtut_person(id)", "RESTRICT", "RESTRICT")
+	c.Db.Model(&utilmodels.Country{}).AddForeignKey("language_id", "xtut_language(id)", "RESTRICT", "RESTRICT")
 	//c.Db.Model(&utilmodels.Contacts{}).AddForeignKey("company_entities_id", "xtut_company_entities(id)", "RESTRICT", "RESTRICT")
 	c.Db.Model(&utilmodels.RegionState{}).AddUniqueIndex("idx_region_state_country_id_name", "country_id", "name")
 	c.Db.Model(&utilmodels.Towns{}).AddUniqueIndex("idx_town_region_id_name", "region_state_id", "name")

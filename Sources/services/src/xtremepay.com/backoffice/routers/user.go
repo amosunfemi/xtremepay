@@ -24,10 +24,10 @@ func (c UserRouter) Routing(router *mux.Router, apiprefix string) {
 	baseModel := base.BaseModel{Status: "ACTIVE", Createdat: time.Now()}
 	httpUtilFunc := utilFunc.HTTPUtilityFunctions{}
 	userController := controllers.UserController{c.Db, baseModel, httpUtilFunc}
-
+	securityController := controllers.SecurityController{c.Db, baseModel, httpUtilFunc}
 	// User url mappings
 	router.HandleFunc(apiprefix+"/user", userController.CreateUser).Methods("POST")
-	router.HandleFunc(apiprefix+"/token-auth", controllers.Login).Methods("POST")
+	router.HandleFunc(apiprefix+"/token-auth", securityController.Login).Methods("POST")
 	router.Handle(apiprefix+"/refresh-token-auth",
 		negroni.New(
 			negroni.HandlerFunc(authentication.RequireTokenAuthentication),

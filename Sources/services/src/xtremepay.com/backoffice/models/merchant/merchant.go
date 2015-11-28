@@ -18,6 +18,7 @@ type Merchant struct {
 	Goods         []Goods
 }
 
+// TableName ...
 func (c Merchant) TableName() string {
 	return "xtmc_merchant"
 }
@@ -36,6 +37,7 @@ type Goods struct {
 	GoodHist        []GoodHist
 }
 
+// TableName ...
 func (c Goods) TableName() string {
 	return "xtmc_goods"
 }
@@ -54,6 +56,7 @@ type GoodHist struct {
 	GoodserviceID   int
 }
 
+// TableName ...
 func (c GoodHist) TableName() string {
 	return "xtmc_good_hist"
 }

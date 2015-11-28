@@ -3,7 +3,13 @@
     "name": "utility",
     "port": 3003,
     "mode":"dev",
-    "apiprefix":"/xtremepay/v1.0/security",
+    "apiprefix":"/xtremepay/v1.0/utility",
+    "log": {
+      "context": "xtremepay-utility",
+      "format": "%{color}%{time:15:04:05.000} %{shortfunc} ▶ %{level:.4s} %{id:03x}%{color:reset} %{message}",
+      "error_file": "utility_error.json",
+      "info_file": "utility_info.json"
+    },
     "datastore": {
       "dev": {
         "host": "127.0.0.1",

@@ -24,14 +24,6 @@ type ServiceManager struct {
 }
 
 func main() {
-	/*defer func() {
-		if err := models.ClosePool(); err != nil {
-			log.Fatal(err)
-		}
-	}()*/
-
-	// Get the mode in which the app is running
-	// Get the name of the service
 
 	router := mux.NewRouter()
 	n := negroni.New(negroni.NewLogger())

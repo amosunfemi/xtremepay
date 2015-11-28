@@ -38,9 +38,8 @@ func (c CommonController) CreateCountry(res http.ResponseWriter, req *http.Reque
 		r.JSON(res, 422, bindingErr.Error())
 		return
 	}
-
 	// save to database
-	p := models.Country{c.BaseModel, country.ISOCode, country.Name, country.RegionStates}
+	p := models.Country{c.BaseModel, country.ISOCode, country.Name, country.RegionStates, country.Language, country.LanguageID}
 
 	tx := c.Db.Begin()
 
@@ -102,7 +101,6 @@ func (c CommonController) CreateTown(res http.ResponseWriter, req *http.Request)
 		r.JSON(res, 422, bindingErr.Error())
 		return
 	}
-
 	// save to database
 	p := models.Towns{c.BaseModel, town.RegionStateID, town.Name}
 

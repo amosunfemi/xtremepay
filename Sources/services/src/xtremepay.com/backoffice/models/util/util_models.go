@@ -8,12 +8,52 @@ import (
 	"xtremepay.com/backoffice/models"
 )
 
+//Language ...
+type Language struct {
+	models.BaseModel
+	ISOCode string `sql:"not null;unique" json:"ISOCode"`
+	Name    string `sql:"not null;unique" json:"Name"`
+}
+
+// TableName ...
+func (lang Language) TableName() string {
+	return "xtut_language"
+}
+
+// FieldMap ...
+func (lang *Language) FieldMap(req *http.Request) binding.FieldMap {
+	return binding.FieldMap{
+		&lang.ISOCode: binding.Field{
+			Form:     "ISOCode",
+			Required: true,
+		},
+		&lang.Name: binding.Field{
+			Form:     "Name",
+			Required: true,
+		},
+	}
+}
+
+// Validate ...
+func (lang Language) Validate(req *http.Request, errs binding.Errors) binding.Errors {
+	if utf8.RuneCountInString(lang.ISOCode) != 3 {
+		errs = append(errs, binding.Error{
+			FieldNames:     []string{"ISOCode"},
+			Classification: "ComplaintError",
+			Message:        "Country ISOCode must be of length 3.",
+		})
+	}
+	return errs
+}
+
 //Country ...
 type Country struct {
 	models.BaseModel
 	ISOCode      string        `sql:"not null;unique" json:"ISOCode"`
 	Name         string        `sql:"not null;unique" json:"Name"`
 	RegionStates []RegionState `json:"RegionStates"`
+	Language     Language
+	LanguageID   int64
 }
 
 // TableName ...

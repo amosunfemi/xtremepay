@@ -10,10 +10,9 @@ import (
 )
 
 // Login ...
-func Login(requestUser *models.User) (int, []byte) {
+func Login(requestUser *models.User, password string) (int, []byte) {
 	authBackend := authentication.InitJWTAuthenticationBackend()
-
-	if authBackend.Authenticate(requestUser) {
+	if authBackend.Authenticate(requestUser, password) {
 		token, err := authBackend.GenerateToken(requestUser.UUID)
 		if err != nil {
 			return http.StatusInternalServerError, []byte("")

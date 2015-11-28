@@ -3,6 +3,8 @@ package controllers
 import (
 	"net/http"
 
+	"golang.org/x/crypto/bcrypt"
+
 	"github.com/jinzhu/gorm"
 	"github.com/mholt/binding"
 	"github.com/pborman/uuid"
@@ -46,7 +48,8 @@ func (u UserController) CreateUser(res http.ResponseWriter, req *http.Request) {
 		r.JSON(res, 422, bindingErr.Error())
 		return
 	}
-
+	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(user.Password), 10)
+	user.Password = string(hashedPassword)
 	p := models.User{u.BaseModel, user.Realm, user.Username, user.Password, user.Credential, user.Challenges, user.Email, user.Emailverified, user.Verificationtoken,
 		user.LogInCummulative, user.FailedAttemptedLogin, uuid.New(), user.PersonID, user.PhoneNum, user.VerifiedPhoneNum}
 

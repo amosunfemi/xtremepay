@@ -108,12 +108,12 @@ func (acctMap AccountFundMapping) TableName() string {
 // FieldMap ...
 func (acctMap *AccountFundMapping) FieldMap(req *http.Request) binding.FieldMap {
 	return binding.FieldMap{
-		&acct.AccountNo: binding.Field{
+		&acctMap.AccountNo: binding.Field{
 			Form:     "AccountNo",
 			Required: true,
 		},
-		&acct.AccountCategoryID: binding.Field{
-			Form:     "AccountCategoryID",
+		&acctMap.FundSource: binding.Field{
+			Form:     "FundSource",
 			Required: true,
 		},
 	}
