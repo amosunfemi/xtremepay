@@ -84,8 +84,6 @@ func (backend *JWTAuthenticationBackend) getTokenRemainingValidity(timestamp int
 
 func (backend *JWTAuthenticationBackend) Logout(tokenString string, token *jwt.Token) error {
 	redisConn := redis.Connect()
-	fmt.Println(tokenString)
-	fmt.Println(&token)
 	return redisConn.SetValue(tokenString, tokenString, backend.getTokenRemainingValidity(token.Claims["exp"]))
 }
 

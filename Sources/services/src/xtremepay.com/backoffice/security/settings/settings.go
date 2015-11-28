@@ -8,9 +8,9 @@ import (
 )
 
 var environments = map[string]string{
-	"production":    "settings/prod.json",
-	"preproduction": "settings/pre.json",
-	"tests":         "../../settings/tests.json",
+	"production":    "/Users/amosunsunday/Documents/Official/xtremepay/Sources/services/src/xtremepay.com/backoffice/security/settings/prod.json",
+	"preproduction": "/Users/amosunsunday/Documents/Official/xtremepay/Sources/services/src/xtremepay.com/backoffice/security/settings/pre.json",
+	"tests":         "/Users/amosunsunday/Documents/Official/xtremepay/Sources/services/src/xtremepay.com/backoffice/security/settings/tests.json",
 }
 
 type Settings struct {
@@ -32,14 +32,12 @@ func Init() {
 }
 
 func LoadSettingsByEnv(env string) {
-
 	content, err := ioutil.ReadFile(environments[env])
 	if err != nil {
 		fmt.Println("Error while reading config file", err)
 	}
 	settings = Settings{}
 	jsonErr := json.Unmarshal(content, &settings)
-	fmt.Println(content)
 	if jsonErr != nil {
 		fmt.Println("Error while parsing config file", jsonErr)
 	}
@@ -50,7 +48,8 @@ func GetEnvironment() string {
 }
 
 func Get() Settings {
-	if &settings == nil {
+
+	if &settings == nil || settings.PrivateKeyPath == "" {
 		Init()
 	}
 	return settings

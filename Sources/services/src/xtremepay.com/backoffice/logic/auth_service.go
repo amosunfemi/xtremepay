@@ -2,6 +2,7 @@ package logic
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	jwt "github.com/dgrijalva/jwt-go"
@@ -40,6 +41,7 @@ func RefreshToken(requestUser *models.User) []byte {
 
 // Logout ...
 func Logout(req *http.Request) error {
+	fmt.Println("service logout")
 	authBackend := authentication.InitJWTAuthenticationBackend()
 	tokenRequest, err := jwt.ParseFromRequest(req, func(token *jwt.Token) (interface{}, error) {
 		return authBackend.PublicKey, nil
@@ -47,6 +49,7 @@ func Logout(req *http.Request) error {
 	if err != nil {
 		return err
 	}
+
 	tokenString := req.Header.Get("Authorization")
 	return authBackend.Logout(tokenString, tokenRequest)
 }

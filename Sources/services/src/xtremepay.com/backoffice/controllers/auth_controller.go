@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/jinzhu/gorm"
@@ -54,7 +55,11 @@ func RefreshToken(w http.ResponseWriter, r *http.Request, next http.HandlerFunc)
 
 // Logout ...
 func Logout(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
+
 	err := services.Logout(r)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
 	w.Header().Set("Content-Type", "application/json")
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
