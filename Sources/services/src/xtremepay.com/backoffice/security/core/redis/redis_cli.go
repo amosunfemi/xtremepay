@@ -23,7 +23,7 @@ func Connect() (conn *RedisCli) {
 			fmt.Print(err.Error())
 			panic(err)
 		}
-
+		// No password yet
 		/*if _, err := instanceRedisCli.conn.Do("AUTH", "Brainattica"); err != nil { //if _, err := instanceRedisCli.conn.Do("AUTH", "Brainattica"); err != nil {
 			instanceRedisCli.conn.Close()
 			panic(err)

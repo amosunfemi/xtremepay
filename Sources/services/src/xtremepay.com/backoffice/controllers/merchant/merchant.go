@@ -5,54 +5,88 @@ import (
 
 	"fmt"
 
-	"github.com/albrow/forms"
 	"github.com/gorilla/mux"
 	"github.com/jinzhu/gorm"
+	"github.com/mholt/binding"
 	"github.com/unrolled/render"
+	base "xtremepay.com/backoffice/models"
 	models "xtremepay.com/backoffice/models/merchant"
+	"xtremepay.com/backoffice/utility"
 )
 
 //Controller ...
 type Controller struct {
-	Db *gorm.DB
+	Db           *gorm.DB
+	BaseModel    base.BaseModel
+	HTTPUtilDunc utility.HTTPUtilityFunctions
 }
 
-// Create ... create new merchant
-func (c Controller) Create(res http.ResponseWriter, req *http.Request) {
+// CreateMerchant ... create new merchant
+func (c Controller) CreateMerchant(res http.ResponseWriter, req *http.Request, next http.HandlerFunc) {
 	r := render.New(render.Options{})
-	merchantData, err := forms.Parse(req)
-	if err != nil {
-		panic(err)
-	}
-
-	// validations
-	val := merchantData.Validator()
-	val.Require("customer")
-	val.Require("alternative_id")
-	if val.HasErrors() {
-		r.JSON(res, 422, val.ErrorMap())
+	merchant := new(models.Merchant)
+	errs := binding.Bind(req, merchant)
+	if errs.Handle(res) {
+		r.JSON(res, 422, errs.Error())
 		return
 	}
 
-	// save to database
-	p := &models.Merchant{
-	//Customer:      nil,
-	//AlternativeID: merchantData.Get("alternative_id"),
+	bindingErr := merchant.Validate(req, errs)
+
+	if bindingErr != nil {
+		r.JSON(res, 422, bindingErr.Error())
+		return
 	}
+	// save to database
+
+	p := models.Merchant{c.BaseModel, merchant.Account, merchant.AccountID, merchant.Customer, merchant.CustomerID, merchant.AlternativeID, merchant.Goods}
 
 	tx := c.Db.Begin()
 
-	if err := tx.Create(p).Error; err != nil {
+	if err := tx.Create(&p).Error; err != nil {
 		tx.Rollback()
 		panic(err)
 	}
+	tx.Commit()
+
+	// render response
+	r.JSON(res, 200, p)
+}
+
+// CreateGood ... create new merchant
+func (c Controller) CreateGood(res http.ResponseWriter, req *http.Request, next http.HandlerFunc) {
+	r := render.New(render.Options{})
+	good := new(models.Goods)
+	errs := binding.Bind(req, good)
+	if errs.Handle(res) {
+		r.JSON(res, 422, errs.Error())
+		return
+	}
+
+	bindingErr := good.Validate(req, errs)
+
+	if bindingErr != nil {
+		r.JSON(res, 422, bindingErr.Error())
+		return
+	}
+	// save to database
+	p := models.Goods{c.BaseModel, good.MerchantID, good.PercentDiscount, good.AvailFrom, good.AvailTo, good.Promo, good.UnitPrice, good.GoodServices, good.GoodserviceID,
+		good.GoodCategoryID, good.GoodHist}
+
+	tx := c.Db.Begin()
+
+	if err := tx.Create(&p).Error; err != nil {
+		tx.Rollback()
+		panic(err)
+	}
+	tx.Commit()
 
 	// render response
 	r.JSON(res, 200, p)
 }
 
 // Show ... select a merchant by id
-func (c Controller) Show(res http.ResponseWriter, req *http.Request) {
+func (c Controller) Show(res http.ResponseWriter, req *http.Request, next http.HandlerFunc) {
 	r := render.New(render.Options{})
 	vars := mux.Vars(req)
 	id := vars["id"]
@@ -73,7 +107,7 @@ func (c Controller) Show(res http.ResponseWriter, req *http.Request) {
 }
 
 // Update ... update a merchant by id
-func (c Controller) Update(res http.ResponseWriter, req *http.Request) {
+func (c Controller) Update(res http.ResponseWriter, req *http.Request, next http.HandlerFunc) {
 	/*r := render.New(render.Options{})
 	vars := mux.Vars(req)
 	id := vars["id"]
@@ -107,7 +141,7 @@ func (c Controller) Update(res http.ResponseWriter, req *http.Request) {
 
 // Index ... Fetch all merchant, this should be done by page and limit ...
 // Its should not be available to all
-func (c Controller) Index(res http.ResponseWriter, req *http.Request) {
+func (c Controller) Index(res http.ResponseWriter, req *http.Request, next http.HandlerFunc) {
 	/*r := render.New(render.Options{})
 
 	// find all Merchant in the database
@@ -121,7 +155,7 @@ func (c Controller) Index(res http.ResponseWriter, req *http.Request) {
 }
 
 // Delete ... Update a merchant status to Delete
-func (c Controller) Delete(res http.ResponseWriter, req *http.Request) {
+func (c Controller) Delete(res http.ResponseWriter, req *http.Request, next http.HandlerFunc) {
 	/*r := render.New(render.Options{})
 	vars := mux.Vars(req)
 	id := vars["id"]

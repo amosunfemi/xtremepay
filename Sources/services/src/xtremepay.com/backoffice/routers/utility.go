@@ -3,8 +3,10 @@ package routers
 import (
 	"time"
 
+	"github.com/codegangsta/negroni"
 	"github.com/gorilla/mux"
 	"github.com/jinzhu/gorm"
+	"xtremepay.com/backoffice/security/core/authentication"
 	utilFunc "xtremepay.com/backoffice/utility"
 
 	controllers "xtremepay.com/backoffice/controllers"
@@ -24,18 +26,58 @@ func (c UtilityRouter) Routing(router *mux.Router, apiprefix string) {
 	personController := controllers.PersonController{c.Db, baseModel, httpUtilFunc}
 	utilController := controllers.CommonController{c.Db, baseModel, httpUtilFunc}
 	// Person url mappings
-	router.HandleFunc(apiprefix+"/person", personController.CreatePerson).Methods("POST")
-	router.HandleFunc(apiprefix+"/address", personController.CreateAddress).Methods("POST")
-	router.HandleFunc(apiprefix+"/contact", personController.CreateContact).Methods("POST")
-	router.HandleFunc(apiprefix+"/personidtype", personController.CreatePersonIDType).Methods("POST")
+	router.Handle(apiprefix+"/person",
+		negroni.New(
+			negroni.HandlerFunc(authentication.RequireTokenAuthentication),
+			negroni.HandlerFunc(personController.CreatePerson),
+		)).Methods("POST")
+	router.Handle(apiprefix+"/address",
+		negroni.New(
+			negroni.HandlerFunc(authentication.RequireTokenAuthentication),
+			negroni.HandlerFunc(personController.CreateAddress),
+		)).Methods("POST")
+	router.Handle(apiprefix+"/contact",
+		negroni.New(
+			negroni.HandlerFunc(authentication.RequireTokenAuthentication),
+			negroni.HandlerFunc(personController.CreateContact),
+		)).Methods("POST")
+	router.Handle(apiprefix+"/personidtype",
+		negroni.New(
+			negroni.HandlerFunc(authentication.RequireTokenAuthentication),
+			negroni.HandlerFunc(personController.CreatePersonIDType),
+		)).Methods("POST")
 
-	router.HandleFunc(apiprefix+"/person/search", personController.SearchPersonGeneric).Methods("POST")
-	router.HandleFunc(apiprefix+"/address/search", personController.SearchAddressGeneric).Methods("POST")
-	router.HandleFunc(apiprefix+"/contact/search", personController.SearchContactGeneric).Methods("POST")
+	router.Handle(apiprefix+"/person/search",
+		negroni.New(
+			negroni.HandlerFunc(authentication.RequireTokenAuthentication),
+			negroni.HandlerFunc(personController.SearchPersonGeneric),
+		)).Methods("POST")
+	router.Handle(apiprefix+"/address/search",
+		negroni.New(
+			negroni.HandlerFunc(authentication.RequireTokenAuthentication),
+			negroni.HandlerFunc(personController.SearchAddressGeneric),
+		)).Methods("POST")
+	router.Handle(apiprefix+"/contact/search",
+		negroni.New(
+			negroni.HandlerFunc(authentication.RequireTokenAuthentication),
+			negroni.HandlerFunc(personController.SearchContactGeneric),
+		)).Methods("POST")
 
-	router.HandleFunc(apiprefix+"/person/{person_id}/addresses", personController.FetchPersonAddresses).Methods("GET")
-	router.HandleFunc(apiprefix+"/person/{person_id}/contacts", personController.FetchPersonContacts).Methods("GET")
-	router.HandleFunc(apiprefix+"/person/{person_id}/ids", personController.FetchPersonIDs).Methods("GET")
+	router.Handle(apiprefix+"/person/{person_id}/addresses",
+		negroni.New(
+			negroni.HandlerFunc(authentication.RequireTokenAuthentication),
+			negroni.HandlerFunc(personController.FetchPersonAddresses),
+		)).Methods("GET")
+	router.Handle(apiprefix+"/person/{person_id}/contacts",
+		negroni.New(
+			negroni.HandlerFunc(authentication.RequireTokenAuthentication),
+			negroni.HandlerFunc(personController.FetchPersonContacts),
+		)).Methods("GET")
+	router.Handle(apiprefix+"/person/{person_id}/ids",
+		negroni.New(
+			negroni.HandlerFunc(authentication.RequireTokenAuthentication),
+			negroni.HandlerFunc(personController.FetchPersonIDs),
+		)).Methods("GET")
 
 	//router.HandleFunc(apiprefix+"/person/search", personController.Create).Methods("POST")
 	//router.HandleFunc(apiprefix+"/person/{id}", personController.Show).Methods("GET")
@@ -45,21 +87,83 @@ func (c UtilityRouter) Routing(router *mux.Router, apiprefix string) {
 	//router.HandleFunc(apiprefix+"/person/{id}", utilController.Delete).Methods("DELETE")
 
 	// Country, Region and Town routes
-	router.HandleFunc(apiprefix+"/country", utilController.CreateCountry).Methods("POST")
-	router.HandleFunc(apiprefix+"/region", utilController.CreateRegion).Methods("POST")
-	router.HandleFunc(apiprefix+"/town", utilController.CreateTown).Methods("POST")
-	router.HandleFunc(apiprefix+"/country/{search}", utilController.SearchCountryGeneric).Methods("POST")
-	router.HandleFunc(apiprefix+"/region/{search}", utilController.SearchRegionStateGeneric).Methods("POST")
-	router.HandleFunc(apiprefix+"/town/{search}", utilController.SearchTown).Methods("POST")
-	router.HandleFunc(apiprefix+"/country/{country_id}/regions", utilController.FetchCountryRegion).Methods("GET")
-	router.HandleFunc(apiprefix+"/country/{country_code}/regions", utilController.FetchCountryRegion).Methods("GET")
-	router.HandleFunc(apiprefix+"/country/{country_id}/region/{region_id}/towns", utilController.FetchRegionTowns).Methods("GET")
-	router.HandleFunc(apiprefix+"/country/{id}", utilController.ShowCountry).Methods("GET")
-	router.HandleFunc(apiprefix+"/countries", utilController.FetchAllCountries).Methods("GET")
-	router.HandleFunc(apiprefix+"/country/{id}", utilController.UpdateCountry).Methods("PUT", "PATCH")
-	router.HandleFunc(apiprefix+"/region/{id}", utilController.UpdateRegion).Methods("PUT", "PATCH")
-	router.HandleFunc(apiprefix+"/town/{id}", utilController.UpdateTown).Methods("PUT", "PATCH")
+	router.Handle(apiprefix+"/country",
+		negroni.New(
+			negroni.HandlerFunc(authentication.RequireTokenAuthentication),
+			negroni.HandlerFunc(utilController.CreateCountry),
+		)).Methods("POST")
+	router.Handle(apiprefix+"/region",
+		negroni.New(
+			negroni.HandlerFunc(authentication.RequireTokenAuthentication),
+			negroni.HandlerFunc(utilController.CreateRegion),
+		)).Methods("POST")
+	router.Handle(apiprefix+"/town",
+		negroni.New(
+			negroni.HandlerFunc(authentication.RequireTokenAuthentication),
+			negroni.HandlerFunc(utilController.CreateTown),
+		)).Methods("POST")
+	router.Handle(apiprefix+"/country/{search}",
+		negroni.New(
+			negroni.HandlerFunc(authentication.RequireTokenAuthentication),
+			negroni.HandlerFunc(utilController.SearchCountryGeneric),
+		)).Methods("POST")
+	router.Handle(apiprefix+"/region/{search}",
+		negroni.New(
+			negroni.HandlerFunc(authentication.RequireTokenAuthentication),
+			negroni.HandlerFunc(utilController.SearchRegionStateGeneric),
+		)).Methods("POST")
+	router.Handle(apiprefix+"/town/{search}",
+		negroni.New(
+			negroni.HandlerFunc(authentication.RequireTokenAuthentication),
+			negroni.HandlerFunc(utilController.SearchTown),
+		)).Methods("POST")
+	router.Handle(apiprefix+"/country/{country_id}/regions",
+		negroni.New(
+			negroni.HandlerFunc(authentication.RequireTokenAuthentication),
+			negroni.HandlerFunc(utilController.FetchCountryRegion),
+		)).Methods("GET")
+	router.Handle(apiprefix+"/country/{country_code}/regions",
+		negroni.New(
+			negroni.HandlerFunc(authentication.RequireTokenAuthentication),
+			negroni.HandlerFunc(utilController.FetchCountryRegion),
+		)).Methods("GET")
+	router.Handle(apiprefix+"/country/{country_id}/region/{region_id}/towns",
+		negroni.New(
+			negroni.HandlerFunc(authentication.RequireTokenAuthentication),
+			negroni.HandlerFunc(utilController.FetchRegionTowns),
+		)).Methods("GET")
+	router.Handle(apiprefix+"/country/{id}",
+		negroni.New(
+			negroni.HandlerFunc(authentication.RequireTokenAuthentication),
+			negroni.HandlerFunc(utilController.ShowCountry),
+		)).Methods("GET")
+	router.Handle(apiprefix+"/countries",
+		negroni.New(
+			negroni.HandlerFunc(authentication.RequireTokenAuthentication),
+			negroni.HandlerFunc(utilController.FetchAllCountries),
+		)).Methods("GET")
+	router.Handle(apiprefix+"/country/{id}",
+		negroni.New(
+			negroni.HandlerFunc(authentication.RequireTokenAuthentication),
+			negroni.HandlerFunc(utilController.UpdateCountry),
+		)).Methods("PUT", "PATCH")
+	router.Handle(apiprefix+"/region/{id}",
+		negroni.New(
+			negroni.HandlerFunc(authentication.RequireTokenAuthentication),
+			negroni.HandlerFunc(utilController.UpdateRegion),
+		)).Methods("PUT", "PATCH")
+	router.Handle(apiprefix+"/town/{id}",
+		negroni.New(
+			negroni.HandlerFunc(authentication.RequireTokenAuthentication),
+			negroni.HandlerFunc(utilController.UpdateTown),
+		)).Methods("PUT", "PATCH")
 	//router.HandleFunc(apiprefix+"/token-auth", controllers.Login).Methods("POST")
+
+	router.Handle(apiprefix+"/logout",
+		negroni.New(
+			negroni.HandlerFunc(authentication.RequireTokenAuthentication),
+			negroni.HandlerFunc(controllers.Logout),
+		)).Methods("GET")
 
 }
 

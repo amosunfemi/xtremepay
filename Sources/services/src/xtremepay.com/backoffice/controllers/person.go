@@ -35,7 +35,7 @@ func (c PersonController) genericSearch(entity interface{}, req *http.Request) (
 }
 
 // FetchPersonIDs ... Fetch all the regions/state of a country
-func (c PersonController) FetchPersonIDs(res http.ResponseWriter, req *http.Request) {
+func (c PersonController) FetchPersonIDs(res http.ResponseWriter, req *http.Request, next http.HandlerFunc) {
 	r := render.New(render.Options{})
 	vars := mux.Vars(req)
 	personID := vars["person_id"]
@@ -57,7 +57,7 @@ func (c PersonController) FetchPersonIDs(res http.ResponseWriter, req *http.Requ
 }
 
 // FetchPersonContacts ... Fetch all the regions/state of a country
-func (c PersonController) FetchPersonContacts(res http.ResponseWriter, req *http.Request) {
+func (c PersonController) FetchPersonContacts(res http.ResponseWriter, req *http.Request, next http.HandlerFunc) {
 	r := render.New(render.Options{})
 	vars := mux.Vars(req)
 	personID := vars["person_id"]
@@ -78,7 +78,7 @@ func (c PersonController) FetchPersonContacts(res http.ResponseWriter, req *http
 }
 
 // FetchPersonAddresses ... Fetch all the regions/state of a country
-func (c PersonController) FetchPersonAddresses(res http.ResponseWriter, req *http.Request) {
+func (c PersonController) FetchPersonAddresses(res http.ResponseWriter, req *http.Request, next http.HandlerFunc) {
 	r := render.New(render.Options{})
 	vars := mux.Vars(req)
 	personID := vars["person_id"]
@@ -99,7 +99,7 @@ func (c PersonController) FetchPersonAddresses(res http.ResponseWriter, req *htt
 }
 
 // SearchAddressGeneric ... Search Country by any field
-func (c PersonController) SearchAddressGeneric(res http.ResponseWriter, req *http.Request) {
+func (c PersonController) SearchAddressGeneric(res http.ResponseWriter, req *http.Request, next http.HandlerFunc) {
 	r := render.New(render.Options{})
 
 	address := models.Addresses{}
@@ -112,7 +112,7 @@ func (c PersonController) SearchAddressGeneric(res http.ResponseWriter, req *htt
 }
 
 // SearchContactGeneric ... Search Country by any field
-func (c PersonController) SearchContactGeneric(res http.ResponseWriter, req *http.Request) {
+func (c PersonController) SearchContactGeneric(res http.ResponseWriter, req *http.Request, next http.HandlerFunc) {
 	r := render.New(render.Options{})
 
 	contact := models.Contacts{}
@@ -125,7 +125,7 @@ func (c PersonController) SearchContactGeneric(res http.ResponseWriter, req *htt
 }
 
 // SearchPersonGeneric ... Search Country by any field
-func (c PersonController) SearchPersonGeneric(res http.ResponseWriter, req *http.Request) {
+func (c PersonController) SearchPersonGeneric(res http.ResponseWriter, req *http.Request, next http.HandlerFunc) {
 	r := render.New(render.Options{})
 
 	person := []models.Person{}
@@ -138,7 +138,7 @@ func (c PersonController) SearchPersonGeneric(res http.ResponseWriter, req *http
 }
 
 // CreatePersonIDType ... add new contact to a person
-func (c PersonController) CreatePersonIDType(res http.ResponseWriter, req *http.Request) {
+func (c PersonController) CreatePersonIDType(res http.ResponseWriter, req *http.Request, next http.HandlerFunc) {
 	r := render.New(render.Options{})
 	personIDType := new(models.PersonIDType)
 	errs := binding.Bind(req, personIDType)
@@ -163,7 +163,7 @@ func (c PersonController) CreatePersonIDType(res http.ResponseWriter, req *http.
 }
 
 // CreateContact ... add new contact to a person
-func (c PersonController) CreateContact(res http.ResponseWriter, req *http.Request) {
+func (c PersonController) CreateContact(res http.ResponseWriter, req *http.Request, next http.HandlerFunc) {
 	r := render.New(render.Options{})
 	contact := new(models.Contacts)
 	errs := binding.Bind(req, contact)
@@ -192,7 +192,7 @@ func (c PersonController) CreateContact(res http.ResponseWriter, req *http.Reque
 }
 
 // CreatePerson ... create new person
-func (c PersonController) CreatePerson(res http.ResponseWriter, req *http.Request) {
+func (c PersonController) CreatePerson(res http.ResponseWriter, req *http.Request, next http.HandlerFunc) {
 	r := render.New(render.Options{})
 	person := new(models.Person)
 	errs := binding.Bind(req, person)
@@ -224,7 +224,7 @@ func (c PersonController) CreatePerson(res http.ResponseWriter, req *http.Reques
 }
 
 // CreateAddress ... add new address to a person
-func (c PersonController) CreateAddress(res http.ResponseWriter, req *http.Request) {
+func (c PersonController) CreateAddress(res http.ResponseWriter, req *http.Request, next http.HandlerFunc) {
 	r := render.New(render.Options{})
 	address := new(models.Addresses)
 	errs := binding.Bind(req, address)
@@ -256,7 +256,7 @@ func (c PersonController) CreateAddress(res http.ResponseWriter, req *http.Reque
 }
 
 // UpdateCountry ... update a merchant by id
-func (c PersonController) UpdateCountry(res http.ResponseWriter, req *http.Request) {
+func (c PersonController) UpdateCountry(res http.ResponseWriter, req *http.Request, next http.HandlerFunc) {
 	r := render.New(render.Options{})
 	vars := mux.Vars(req)
 	id := vars["id"]
@@ -299,7 +299,7 @@ func (c PersonController) UpdateCountry(res http.ResponseWriter, req *http.Reque
 }
 
 // UpdateTown ... update a merchant by id
-func (c PersonController) UpdateTown(res http.ResponseWriter, req *http.Request) {
+func (c PersonController) UpdateTown(res http.ResponseWriter, req *http.Request, next http.HandlerFunc) {
 	r := render.New(render.Options{})
 	vars := mux.Vars(req)
 	id := vars["id"]
@@ -338,7 +338,7 @@ func (c PersonController) UpdateTown(res http.ResponseWriter, req *http.Request)
 }
 
 // UpdateRegion ... update a merchant by id
-func (c PersonController) UpdateRegion(res http.ResponseWriter, req *http.Request) {
+func (c PersonController) UpdateRegion(res http.ResponseWriter, req *http.Request, next http.HandlerFunc) {
 	r := render.New(render.Options{})
 	vars := mux.Vars(req)
 	id := vars["id"]
@@ -378,7 +378,7 @@ func (c PersonController) UpdateRegion(res http.ResponseWriter, req *http.Reques
 }
 
 // SearchCountryGeneric ... Search Country by any field
-func (c PersonController) SearchCountryGeneric(res http.ResponseWriter, req *http.Request) {
+func (c PersonController) SearchCountryGeneric(res http.ResponseWriter, req *http.Request, next http.HandlerFunc) {
 	r := render.New(render.Options{})
 	vars := mux.Vars(req)
 	search := vars["search"]
@@ -406,7 +406,7 @@ func (c PersonController) SearchCountryGeneric(res http.ResponseWriter, req *htt
 }
 
 // SearchRegionStateGeneric ... Search Country by any field
-func (c PersonController) SearchRegionStateGeneric(res http.ResponseWriter, req *http.Request) {
+func (c PersonController) SearchRegionStateGeneric(res http.ResponseWriter, req *http.Request, next http.HandlerFunc) {
 	r := render.New(render.Options{})
 	vars := mux.Vars(req)
 	search := vars["search"]
@@ -424,7 +424,7 @@ func (c PersonController) SearchRegionStateGeneric(res http.ResponseWriter, req 
 }
 
 // SearchTown ... Search Country by any field
-func (c PersonController) SearchTown(res http.ResponseWriter, req *http.Request) {
+func (c PersonController) SearchTown(res http.ResponseWriter, req *http.Request, next http.HandlerFunc) {
 	r := render.New(render.Options{})
 	vars := mux.Vars(req)
 	search := vars["search"]
@@ -442,7 +442,7 @@ func (c PersonController) SearchTown(res http.ResponseWriter, req *http.Request)
 }
 
 // ShowCountry ... select a merchant by id
-func (c PersonController) ShowCountry(res http.ResponseWriter, req *http.Request) {
+func (c PersonController) ShowCountry(res http.ResponseWriter, req *http.Request, next http.HandlerFunc) {
 	r := render.New(render.Options{})
 	vars := mux.Vars(req)
 	id := vars["id"]
@@ -462,7 +462,7 @@ func (c PersonController) ShowCountry(res http.ResponseWriter, req *http.Request
 }
 
 // FetchAllCountries ... select a merchant by id
-func (c PersonController) FetchAllCountries(res http.ResponseWriter, req *http.Request) {
+func (c PersonController) FetchAllCountries(res http.ResponseWriter, req *http.Request, next http.HandlerFunc) {
 	r := render.New(render.Options{})
 
 	// find in the database
@@ -481,7 +481,7 @@ func (c PersonController) FetchAllCountries(res http.ResponseWriter, req *http.R
 }
 
 // FetchCountryRegion ... Fetch all the regions/state of a country
-func (c PersonController) FetchCountryRegion(res http.ResponseWriter, req *http.Request) {
+func (c PersonController) FetchCountryRegion(res http.ResponseWriter, req *http.Request, next http.HandlerFunc) {
 	r := render.New(render.Options{})
 	vars := mux.Vars(req)
 	countryID := vars["country_id"]
@@ -502,7 +502,7 @@ func (c PersonController) FetchCountryRegion(res http.ResponseWriter, req *http.
 }
 
 // FetchRegionTowns ... Fetch all the towns of a region
-func (c PersonController) FetchRegionTowns(res http.ResponseWriter, req *http.Request) {
+func (c PersonController) FetchRegionTowns(res http.ResponseWriter, req *http.Request, next http.HandlerFunc) {
 	r := render.New(render.Options{})
 	vars := mux.Vars(req)
 	regionID := vars["region_id"]

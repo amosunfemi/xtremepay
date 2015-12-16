@@ -23,7 +23,7 @@ type CommonController struct {
 }
 
 // CreateCountry ... create new country
-func (c CommonController) CreateCountry(res http.ResponseWriter, req *http.Request) {
+func (c CommonController) CreateCountry(res http.ResponseWriter, req *http.Request, next http.HandlerFunc) {
 	r := render.New(render.Options{})
 	country := new(models.Country)
 	errs := binding.Bind(req, country)
@@ -54,7 +54,7 @@ func (c CommonController) CreateCountry(res http.ResponseWriter, req *http.Reque
 }
 
 // CreateRegion ... create new region
-func (c CommonController) CreateRegion(res http.ResponseWriter, req *http.Request) {
+func (c CommonController) CreateRegion(res http.ResponseWriter, req *http.Request, next http.HandlerFunc) {
 	r := render.New(render.Options{})
 	region := new(models.RegionState)
 	errs := binding.Bind(req, region)
@@ -86,7 +86,7 @@ func (c CommonController) CreateRegion(res http.ResponseWriter, req *http.Reques
 }
 
 // CreateTown ... create new merchant
-func (c CommonController) CreateTown(res http.ResponseWriter, req *http.Request) {
+func (c CommonController) CreateTown(res http.ResponseWriter, req *http.Request, next http.HandlerFunc) {
 	r := render.New(render.Options{})
 	town := new(models.Towns)
 	errs := binding.Bind(req, town)
@@ -117,7 +117,7 @@ func (c CommonController) CreateTown(res http.ResponseWriter, req *http.Request)
 }
 
 // UpdateCountry ... update a merchant by id
-func (c CommonController) UpdateCountry(res http.ResponseWriter, req *http.Request) {
+func (c CommonController) UpdateCountry(res http.ResponseWriter, req *http.Request, next http.HandlerFunc) {
 	r := render.New(render.Options{})
 	vars := mux.Vars(req)
 	id := vars["id"]
@@ -160,7 +160,7 @@ func (c CommonController) UpdateCountry(res http.ResponseWriter, req *http.Reque
 }
 
 // UpdateTown ... update a merchant by id
-func (c CommonController) UpdateTown(res http.ResponseWriter, req *http.Request) {
+func (c CommonController) UpdateTown(res http.ResponseWriter, req *http.Request, next http.HandlerFunc) {
 	r := render.New(render.Options{})
 	vars := mux.Vars(req)
 	id := vars["id"]
@@ -204,7 +204,7 @@ func (c CommonController) UpdateTown(res http.ResponseWriter, req *http.Request)
 }
 
 // UpdateRegion ... update a merchant by id
-func (c CommonController) UpdateRegion(res http.ResponseWriter, req *http.Request) {
+func (c CommonController) UpdateRegion(res http.ResponseWriter, req *http.Request, next http.HandlerFunc) {
 	r := render.New(render.Options{})
 	vars := mux.Vars(req)
 	id := vars["id"]
@@ -248,7 +248,7 @@ func (c CommonController) UpdateRegion(res http.ResponseWriter, req *http.Reques
 }
 
 // SearchCountryGeneric ... Search Country by any field
-func (c CommonController) SearchCountryGeneric(res http.ResponseWriter, req *http.Request) {
+func (c CommonController) SearchCountryGeneric(res http.ResponseWriter, req *http.Request, next http.HandlerFunc) {
 	r := render.New(render.Options{})
 	vars := mux.Vars(req)
 	search := vars["search"]
@@ -276,7 +276,7 @@ func (c CommonController) SearchCountryGeneric(res http.ResponseWriter, req *htt
 }
 
 // SearchRegionStateGeneric ... Search Country by any field
-func (c CommonController) SearchRegionStateGeneric(res http.ResponseWriter, req *http.Request) {
+func (c CommonController) SearchRegionStateGeneric(res http.ResponseWriter, req *http.Request, next http.HandlerFunc) {
 	r := render.New(render.Options{})
 	vars := mux.Vars(req)
 	search := vars["search"]
@@ -294,7 +294,7 @@ func (c CommonController) SearchRegionStateGeneric(res http.ResponseWriter, req 
 }
 
 // SearchTown ... Search Country by any field
-func (c CommonController) SearchTown(res http.ResponseWriter, req *http.Request) {
+func (c CommonController) SearchTown(res http.ResponseWriter, req *http.Request, next http.HandlerFunc) {
 	r := render.New(render.Options{})
 	vars := mux.Vars(req)
 	search := vars["search"]
@@ -327,7 +327,7 @@ func (c CommonController) genericSearch(entity interface{}, req *http.Request) (
 }
 
 // ShowCountry ... select a merchant by id
-func (c CommonController) ShowCountry(res http.ResponseWriter, req *http.Request) {
+func (c CommonController) ShowCountry(res http.ResponseWriter, req *http.Request, next http.HandlerFunc) {
 	r := render.New(render.Options{})
 	vars := mux.Vars(req)
 	id := vars["id"]
@@ -347,7 +347,7 @@ func (c CommonController) ShowCountry(res http.ResponseWriter, req *http.Request
 }
 
 // FetchAllCountries ... select a merchant by id
-func (c CommonController) FetchAllCountries(res http.ResponseWriter, req *http.Request) {
+func (c CommonController) FetchAllCountries(res http.ResponseWriter, req *http.Request, next http.HandlerFunc) {
 	r := render.New(render.Options{})
 
 	// find in the database
@@ -366,7 +366,7 @@ func (c CommonController) FetchAllCountries(res http.ResponseWriter, req *http.R
 }
 
 // FetchCountryRegion ... Fetch all the regions/state of a country
-func (c CommonController) FetchCountryRegion(res http.ResponseWriter, req *http.Request) {
+func (c CommonController) FetchCountryRegion(res http.ResponseWriter, req *http.Request, next http.HandlerFunc) {
 	r := render.New(render.Options{})
 	vars := mux.Vars(req)
 	countryID := vars["country_id"]
@@ -387,7 +387,7 @@ func (c CommonController) FetchCountryRegion(res http.ResponseWriter, req *http.
 }
 
 // FetchRegionTowns ... Fetch all the towns of a region
-func (c CommonController) FetchRegionTowns(res http.ResponseWriter, req *http.Request) {
+func (c CommonController) FetchRegionTowns(res http.ResponseWriter, req *http.Request, next http.HandlerFunc) {
 	r := render.New(render.Options{})
 	vars := mux.Vars(req)
 	regionID := vars["region_id"]

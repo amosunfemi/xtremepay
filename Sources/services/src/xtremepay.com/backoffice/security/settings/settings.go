@@ -8,9 +8,9 @@ import (
 )
 
 var environments = map[string]string{
-	"production":    "/Users/amosunsunday/Documents/Official/xtremepay/Sources/services/src/xtremepay.com/backoffice/security/settings/prod.json",
-	"preproduction": "/Users/amosunsunday/Documents/Official/xtremepay/Sources/services/src/xtremepay.com/backoffice/security/settings/pre.json",
-	"tests":         "/Users/amosunsunday/Documents/Official/xtremepay/Sources/services/src/xtremepay.com/backoffice/security/settings/tests.json",
+	"production":    "security/settings/prod.json",
+	"preproduction": "security/settings/pre.json",
+	"tests":         "security/settings/tests.json",
 }
 
 type Settings struct {

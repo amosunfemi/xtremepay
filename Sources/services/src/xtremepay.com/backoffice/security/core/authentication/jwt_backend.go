@@ -65,7 +65,6 @@ func (backend *JWTAuthenticationBackend) Authenticate(user *util.User, password 
 		Username: user.Username,
 		Password: string(hashedPassword),
 	}*/
-
 	user.UUID = uuid.New()
 	//fmt.Println(bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(hashedPassword)))
 	return user.Username == user.Username && bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)) == nil
@@ -100,7 +99,7 @@ func (backend *JWTAuthenticationBackend) IsInBlacklist(token string) bool {
 
 func getPrivateKey() *rsa.PrivateKey {
 	fmt.Println(settings.Get().PrivateKeyPath)
-	privateKeyFile, err := os.Open("/Users/amosunsunday/Documents/Official/xtremepay/Sources/services/src/xtremepay.com/backoffice/security/settings/keys/private_key")
+	privateKeyFile, err := os.Open("security/settings/keys/private_key") ///Users/amosunsunday/Documents/Official/xtremepay/Sources/services/src/xtremepay.com/backoffice/security/settings/
 	if err != nil {
 		panic(err)
 	}

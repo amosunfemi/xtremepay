@@ -12,6 +12,7 @@ import (
 	"github.com/goincremental/negroni-sessions/cookiestore"
 	"github.com/gorilla/mux"
 	"github.com/jinzhu/gorm"
+	"github.com/rs/cors"
 	"github.com/spf13/viper"
 	"xtremepay.com/backoffice/routers"
 )
@@ -21,10 +22,13 @@ type ServiceManager struct {
 	Router        *mux.Router
 	NegroniServer *negroni.Negroni
 	ViperConfig   *viper.Viper
+	Cors          *cors.Cors
 }
 
-func main() {
+var env = "config_utility.json"
 
+func main() {
+	env = os.Getenv("XTREMEPAY_SERVICE")
 	router := mux.NewRouter()
 	n := negroni.New(negroni.NewLogger())
 	viperConfig := viper.New()
@@ -32,8 +36,12 @@ func main() {
 	store := cookiestore.New([]byte("secret123"))
 	n.Use(sessions.Sessions("my_session", store))
 
-	serviceManager := ServiceManager{router, n, viperConfig}
-	serviceManager.LoadConfig("config_security.json")
+	c := cors.New(cors.Options{
+		AllowedOrigins: []string{"http://foo.com"},
+	})
+
+	serviceManager := ServiceManager{router, n, viperConfig, c}
+	serviceManager.LoadConfig(env)
 	serviceManager.LoadService()
 
 }
@@ -69,7 +77,7 @@ func (c ServiceManager) InitDB(dbconndetails map[string]string) (gorm.DB, error)
 	return db, nil
 }
 
-// LoadService ... is the function that start the merchant Microservice
+// LoadService ... This start any service based on the details read from
 func (c ServiceManager) LoadService() string {
 	serviceMode := c.ViperConfig.GetString("service.mode")
 	serviceName := c.ViperConfig.GetString("service.name")
@@ -86,9 +94,10 @@ func (c ServiceManager) LoadService() string {
 			merchantService.MigrateDB()
 			merchantService.Routing(c.Router, apiPrefix)
 			c.NegroniServer.Use(recovery.JSONRecovery(true))
+			c.NegroniServer.Use(c.Cors)
 			c.NegroniServer.UseHandler(c.Router)
 			c.NegroniServer.Run(fmt.Sprintf(":%d", port))
-			return "service started"
+			return "Merchant Service Started"
 		} else {
 			fmt.Println(Err.Error())
 			return Err.Error()
@@ -102,9 +111,10 @@ func (c ServiceManager) LoadService() string {
 			utilityService.MigrateDB()
 			utilityService.Routing(c.Router, apiPrefix)
 			c.NegroniServer.Use(recovery.JSONRecovery(true))
+			c.NegroniServer.Use(c.Cors)
 			c.NegroniServer.UseHandler(c.Router)
 			c.NegroniServer.Run(fmt.Sprintf(":%d", port))
-			return "service started"
+			return "Utility Service Started"
 		} else {
 			fmt.Println(Err.Error())
 			return Err.Error()
@@ -118,10 +128,11 @@ func (c ServiceManager) LoadService() string {
 			userService.MigrateDB()
 			userService.Routing(c.Router, apiPrefix)
 			c.NegroniServer.Use(recovery.JSONRecovery(true))
+			c.NegroniServer.Use(c.Cors)
 			c.NegroniServer.UseHandler(c.Router)
 			c.NegroniServer.Run(fmt.Sprintf(":%d", port))
 
-			return "service started"
+			return "Security Service Started"
 		} else {
 			fmt.Println(Err.Error())
 			return Err.Error()
