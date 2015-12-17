@@ -14,7 +14,7 @@ import (
 	utilmodels "xtremepay.com/backoffice/models/util"
 )
 
-// Utility ... The merchant service definition struct
+// Utility ... The Utility router provide services for most of the utility functionalities in the system. Person, Address, Contact,
 type UtilityRouter struct {
 	Db *gorm.DB
 }
@@ -78,13 +78,6 @@ func (c UtilityRouter) Routing(router *mux.Router, apiprefix string) {
 			negroni.HandlerFunc(authentication.RequireTokenAuthentication),
 			negroni.HandlerFunc(personController.FetchPersonIDs),
 		)).Methods("GET")
-
-	//router.HandleFunc(apiprefix+"/person/search", personController.Create).Methods("POST")
-	//router.HandleFunc(apiprefix+"/person/{id}", personController.Show).Methods("GET")
-	//router.HandleFunc(apiprefix+"/person/{id}", personController.Update).Methods("PUT", "PATCH")
-	//router.HandleFunc(apiprefix+"/person", personController.Index).Methods("GET")
-	//router.HandleFunc(apiprefix+"/person/{id}", personController.Delete).Methods("DELETE")
-	//router.HandleFunc(apiprefix+"/person/{id}", utilController.Delete).Methods("DELETE")
 
 	// Country, Region and Town routes
 	router.Handle(apiprefix+"/country",
@@ -157,13 +150,13 @@ func (c UtilityRouter) Routing(router *mux.Router, apiprefix string) {
 			negroni.HandlerFunc(authentication.RequireTokenAuthentication),
 			negroni.HandlerFunc(utilController.UpdateTown),
 		)).Methods("PUT", "PATCH")
-	//router.HandleFunc(apiprefix+"/token-auth", controllers.Login).Methods("POST")
 
-	router.Handle(apiprefix+"/logout",
+	//Language routes
+	router.Handle(apiprefix+"/language",
 		negroni.New(
 			negroni.HandlerFunc(authentication.RequireTokenAuthentication),
-			negroni.HandlerFunc(controllers.Logout),
-		)).Methods("GET")
+			negroni.HandlerFunc(utilController.CreateLanguage),
+		)).Methods("POST")
 
 }
 

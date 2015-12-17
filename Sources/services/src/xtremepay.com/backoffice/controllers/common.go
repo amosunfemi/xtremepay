@@ -22,6 +22,37 @@ type CommonController struct {
 	HTTPUtilDunc utility.HTTPUtilityFunctions
 }
 
+// CreateLanguage ... create new language
+func (c CommonController) CreateLanguage(res http.ResponseWriter, req *http.Request, next http.HandlerFunc) {
+	r := render.New(render.Options{})
+	language := new(models.Language)
+	errs := binding.Bind(req, language)
+	if errs.Handle(res) {
+		r.JSON(res, 422, errs.Error())
+		return
+	}
+
+	bindingErr := language.Validate(req, errs)
+
+	if bindingErr != nil {
+		r.JSON(res, 422, bindingErr.Error())
+		return
+	}
+	// save to database
+	p := models.Language{c.BaseModel, language.ISOCode, language.Name}
+
+	tx := c.Db.Begin()
+
+	if err := tx.Create(&p).Error; err != nil {
+		tx.Rollback()
+		panic(err)
+	}
+	tx.Commit()
+
+	// render response
+	r.JSON(res, 200, p)
+}
+
 // CreateCountry ... create new country
 func (c CommonController) CreateCountry(res http.ResponseWriter, req *http.Request, next http.HandlerFunc) {
 	r := render.New(render.Options{})

@@ -20,6 +20,8 @@ type Account struct {
 	MaxBalance          float32
 	MinBalance          float32
 	CurrentBalance      float32
+	CustomerID          int
+	Customer            Customer
 }
 
 // TableName ...
@@ -38,6 +40,10 @@ func (acct *Account) FieldMap(req *http.Request) binding.FieldMap {
 			Form:     "AccountCategoryID",
 			Required: true,
 		},
+		&acct.CustomerID: binding.Field{
+			Form:     "CustomerID",
+			Required: true,
+		},
 	}
 }
 
@@ -54,8 +60,27 @@ type AccountCategory struct {
 }
 
 // TableName ...
-func (c AccountCategory) TableName() string {
-	return "xtac_account_category"
+func (acctCat AccountCategory) TableName() string {
+	return "xtac_account_fund_source"
+}
+
+// FieldMap ...
+func (acctCat *AccountCategory) FieldMap(req *http.Request) binding.FieldMap {
+	return binding.FieldMap{
+		&acctCat.Name: binding.Field{
+			Form:     "Name",
+			Required: true,
+		},
+		&acctCat.Description: binding.Field{
+			Form:     "Description",
+			Required: true,
+		},
+	}
+}
+
+// Validate ...
+func (acctCat AccountCategory) Validate(req *http.Request, errs binding.Errors) binding.Errors {
+	return errs
 }
 
 // AccountFundSource ... that xtremepay can manage e.g
@@ -68,8 +93,31 @@ type AccountFundSource struct {
 }
 
 // TableName ...
-func (c AccountFundSource) TableName() string {
+func (acctfsrc AccountFundSource) TableName() string {
 	return "xtac_account_fund_source"
+}
+
+// FieldMap ...
+func (acctfsrc *AccountFundSource) FieldMap(req *http.Request) binding.FieldMap {
+	return binding.FieldMap{
+		&acctfsrc.Name: binding.Field{
+			Form:     "Name",
+			Required: true,
+		},
+		&acctfsrc.Description: binding.Field{
+			Form:     "Description",
+			Required: true,
+		},
+		&acctfsrc.Provider: binding.Field{
+			Form:     "Provider",
+			Required: true,
+		},
+	}
+}
+
+// Validate ...
+func (acctfsrc AccountFundSource) Validate(req *http.Request, errs binding.Errors) binding.Errors {
+	return errs
 }
 
 // AccountLimit ... Limit defined for various kind of account
@@ -84,8 +132,27 @@ type AccountLimit struct {
 }
 
 // TableName ...
-func (c AccountLimit) TableName() string {
+func (acctlm AccountLimit) TableName() string {
 	return "xtac_account_limit"
+}
+
+// FieldMap ...
+func (acctlm *AccountLimit) FieldMap(req *http.Request) binding.FieldMap {
+	return binding.FieldMap{
+		&acctlm.AccountCategoryID: binding.Field{
+			Form:     "AccountCategoryID",
+			Required: true,
+		},
+		&acctlm.TransLimit: binding.Field{
+			Form:     "TransLimit",
+			Required: true,
+		},
+	}
+}
+
+// Validate ...
+func (acctlm AccountLimit) Validate(req *http.Request, errs binding.Errors) binding.Errors {
+	return errs
 }
 
 // AccountFundMapping ...

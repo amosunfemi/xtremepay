@@ -153,3 +153,37 @@ func (gdcat *GoodCategory) FieldMap(req *http.Request) binding.FieldMap {
 func (gdcat GoodCategory) Validate(req *http.Request, errs binding.Errors) binding.Errors {
 	return errs
 }
+
+//BankMerchant ... Merchant Banks Details
+type BankMerchant struct {
+	models.BaseModel
+	BankID     int
+	MerchantID int
+	Bank       util.Bank
+	Merchant   Merchant
+	AccountNo  string
+}
+
+// TableName ...
+func (merbank BankMerchant) TableName() string {
+	return "xtmc_merchant_bank"
+}
+
+// FieldMap ...
+func (merbank *BankMerchant) FieldMap(req *http.Request) binding.FieldMap {
+	return binding.FieldMap{
+		&merbank.BankID: binding.Field{
+			Form:     "BankID",
+			Required: true,
+		},
+		&merbank.MerchantID: binding.Field{
+			Form:     "MerchantID",
+			Required: true,
+		},
+	}
+}
+
+// Validate ...
+func (merbank BankMerchant) Validate(req *http.Request, errs binding.Errors) binding.Errors {
+	return errs
+}

@@ -16,7 +16,6 @@ type Customer struct {
 	CompanyEntitesID int
 	CustomerType     CustomerType
 	CustomerTypeID   int
-	CustomerAccounts []CustomerAccounts
 }
 
 // TableName ...
@@ -44,33 +43,6 @@ func (cust *Customer) FieldMap(req *http.Request) binding.FieldMap {
 
 // Validate ...
 func (cust Customer) Validate(req *http.Request, errs binding.Errors) binding.Errors {
-	return errs
-}
-
-//CustomerAccounts ...
-type CustomerAccounts struct {
-	models.BaseModel
-	Accounts   []Account
-	CustomerID int `sql:"index"`
-}
-
-//TableName ...
-func (custacct CustomerAccounts) TableName() string {
-	return "xtut_customer_accounts"
-}
-
-// FieldMap ...
-func (custacct *CustomerAccounts) FieldMap(req *http.Request) binding.FieldMap {
-	return binding.FieldMap{
-		&custacct.CustomerID: binding.Field{
-			Form:     "CustomerID",
-			Required: true,
-		},
-	}
-}
-
-// Validate ...
-func (custacct CustomerAccounts) Validate(req *http.Request, errs binding.Errors) binding.Errors {
 	return errs
 }
 

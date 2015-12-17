@@ -13,6 +13,7 @@ type Bank struct {
 	Code         string `sql:"not null;unique"`
 	Name         string `sql:"not null;unique"`
 	ClearingCode string
+	SWIFTCode    string
 	Country      Country
 	CountryID    int
 }
