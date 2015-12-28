@@ -4,13 +4,21 @@
     "port": 3004,
     "mode":"dev",
     "apiprefix":"/xtremepay/v1.0/security",
+    "log": {
+      "context": "xtremepay-security",
+      "format": "%{color}%{time:15:04:05.000} %{shortfunc} ▶ %{level:.4s} %{id:03x}%{color:reset} %{message}",
+      "error_file": "security_error.json",
+      "info_file": "security_info.json"
+    },
     "datastore": {
       "dev": {
         "host": "127.0.0.1",
         "port": 5432,
         "database": "xtremepay_dev1",
-        "user": "postgres",
-        "password": "sunday123"
+        "username": "postgres",
+        "password": "sunday123",
+        "storetype":"rdbms",
+        "dbtype":"postgres"
       }
     }
   }

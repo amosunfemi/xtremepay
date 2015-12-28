@@ -253,6 +253,7 @@ func (comp *CompanyEntities) FieldMap(req *http.Request) binding.FieldMap {
 
 // PersonUser ... User and person mapping
 type PersonUser struct {
+	models.BaseModel
 	PersonID int `json:"PersonID"`
 	UserID   int `json:"UserID"`
 }

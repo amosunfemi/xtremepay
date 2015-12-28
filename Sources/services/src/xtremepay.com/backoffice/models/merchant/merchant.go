@@ -162,6 +162,7 @@ type BankMerchant struct {
 	Bank       util.Bank
 	Merchant   Merchant
 	AccountNo  string
+	Verified   bool
 }
 
 // TableName ...
@@ -185,5 +186,38 @@ func (merbank *BankMerchant) FieldMap(req *http.Request) binding.FieldMap {
 
 // Validate ...
 func (merbank BankMerchant) Validate(req *http.Request, errs binding.Errors) binding.Errors {
+	return errs
+}
+
+//Beneficiary ... Merchant Banks Details
+type Beneficiary struct {
+	models.BaseModel
+	MerchantID int
+	Merchant   Merchant
+	PersonID   int
+	Person     util.Person
+}
+
+// TableName ...
+func (merben Beneficiary) TableName() string {
+	return "xtmc_merchant_beneficiary"
+}
+
+// FieldMap ...
+func (merben *Beneficiary) FieldMap(req *http.Request) binding.FieldMap {
+	return binding.FieldMap{
+		&merben.MerchantID: binding.Field{
+			Form:     "MerchantID",
+			Required: true,
+		},
+		&merben.PersonID: binding.Field{
+			Form:     "PersonID",
+			Required: true,
+		},
+	}
+}
+
+// Validate ...
+func (merben Beneficiary) Validate(req *http.Request, errs binding.Errors) binding.Errors {
 	return errs
 }

@@ -5,7 +5,6 @@ import (
 
 	"github.com/codegangsta/negroni"
 	"github.com/gorilla/mux"
-	"github.com/jinzhu/gorm"
 	"xtremepay.com/backoffice/security/core/authentication"
 	utilFunc "xtremepay.com/backoffice/utility"
 
@@ -16,15 +15,15 @@ import (
 
 // UserRouter ... The merchant service definition struct
 type UserRouter struct {
-	Db *gorm.DB
+	DataStore utilFunc.DataStore
 }
 
 // Routing ... list of routing services
 func (c UserRouter) Routing(router *mux.Router, apiprefix string) {
 	baseModel := base.BaseModel{Status: "ACTIVE", Createdat: time.Now()}
 	httpUtilFunc := utilFunc.HTTPUtilityFunctions{}
-	userController := controllers.UserController{c.Db, baseModel, httpUtilFunc}
-	securityController := controllers.SecurityController{c.Db, baseModel, httpUtilFunc}
+	userController := controllers.UserController{baseModel, httpUtilFunc, c.DataStore}
+	securityController := controllers.SecurityController{baseModel, c.DataStore, httpUtilFunc}
 	// User url mappings
 	router.HandleFunc(apiprefix+"/user", userController.CreateUser).Methods("POST")
 	router.HandleFunc(apiprefix+"/token-auth", securityController.Login).Methods("POST")
@@ -43,8 +42,14 @@ func (c UserRouter) Routing(router *mux.Router, apiprefix string) {
 
 // MigrateDB ... Create merchant table and other tables that need to work with merchant
 func (c UserRouter) MigrateDB() {
-	c.Db.AutoMigrate(&utilmodels.User{})
-	c.Db.Model(&utilmodels.User{}).AddForeignKey("person_id", "xtut_person(id)", "RESTRICT", "RESTRICT")
-	c.Db.Model(&utilmodels.User{}).AddUniqueIndex("idx_username", "username")
-	c.Db.Model(&utilmodels.User{}).AddUniqueIndex("idx_email", "email")
+	//modelArray := []interface{}{utilmodels.User{}, utilmodels.PersonUser{}}
+	c.DataStore.InitSchema(&utilmodels.PersonUser{})
+	c.DataStore.InitSchema(&utilmodels.User{})
+	//c.DataStore.InitSchema(utilmodels.PersonUser{})
+
+	//c.DataStore.InitSchema(modelArray)
+
+	//c.Db.Model(&utilmodels.User{}).AddForeignKey("person_id", "xtut_person(id)", "RESTRICT", "RESTRICT")
+	//c.Db.Model(&utilmodels.User{}).AddUniqueIndex("idx_username", "username")
+	//c.Db.Model(&utilmodels.User{}).AddUniqueIndex("idx_email", "email")
 }

@@ -5,7 +5,6 @@ import (
 
 	"golang.org/x/crypto/bcrypt"
 
-	"github.com/jinzhu/gorm"
 	"github.com/mholt/binding"
 	"github.com/pborman/uuid"
 	"github.com/unrolled/render"
@@ -16,20 +15,20 @@ import (
 
 //UserController ...
 type UserController struct {
-	Db           *gorm.DB
 	BaseModel    base.BaseModel
 	HTTPUtilDunc utility.HTTPUtilityFunctions
+	DataStore    utility.DataStore
 }
 
 // genericSearch ... Search for any type
 func (u UserController) genericSearch(entity interface{}, req *http.Request) (interface{}, error) {
 	queryDict, err := u.HTTPUtilDunc.DecodeHTTPBody(req)
+	//entities := []interface{}{entity}
 	if err == nil {
-		query := u.Db.Where(queryDict).Find(entity)
-		if query.Error == gorm.RecordNotFound {
-			return entity, query.Error
+		_, err := u.DataStore.SearchAnyGenericObject(queryDict, &entity)
+		if err != nil {
+			return entity, err
 		}
-		return entity, nil
 	}
 	return entity, nil
 }
@@ -53,13 +52,10 @@ func (u UserController) CreateUser(res http.ResponseWriter, req *http.Request) {
 	p := models.User{u.BaseModel, user.Realm, user.Username, user.Password, user.Credential, user.Challenges, user.Email, user.Emailverified, user.Verificationtoken,
 		user.LogInCummulative, user.FailedAttemptedLogin, uuid.New(), user.PersonID, user.PhoneNum, user.VerifiedPhoneNum}
 
-	tx := u.Db.Begin()
-
-	if err := tx.Create(&p).Error; err != nil {
-		tx.Rollback()
+	err := u.DataStore.SaveDatabaseObject(&p)
+	if err != nil {
 		panic(err)
 	}
-	tx.Commit()
 	// render response
 	r.JSON(res, 200, p)
 }

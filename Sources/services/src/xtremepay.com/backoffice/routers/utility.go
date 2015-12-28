@@ -1,11 +1,11 @@
 package routers
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/codegangsta/negroni"
 	"github.com/gorilla/mux"
-	"github.com/jinzhu/gorm"
 	"xtremepay.com/backoffice/security/core/authentication"
 	utilFunc "xtremepay.com/backoffice/utility"
 
@@ -14,17 +14,17 @@ import (
 	utilmodels "xtremepay.com/backoffice/models/util"
 )
 
-// Utility ... The Utility router provide services for most of the utility functionalities in the system. Person, Address, Contact,
+// UtilityRouter ... The Utility router provide services for most of the utility functionalities in the system. Person, Address, Contact,
 type UtilityRouter struct {
-	Db *gorm.DB
+	DataStore utilFunc.DataStore
 }
 
 // Routing ... list of routing services
 func (c UtilityRouter) Routing(router *mux.Router, apiprefix string) {
 	baseModel := base.BaseModel{Status: "ACTIVE", Createdat: time.Now()}
 	httpUtilFunc := utilFunc.HTTPUtilityFunctions{}
-	personController := controllers.PersonController{c.Db, baseModel, httpUtilFunc}
-	utilController := controllers.CommonController{c.Db, baseModel, httpUtilFunc}
+	personController := controllers.PersonController{baseModel, httpUtilFunc, c.DataStore}
+	utilController := controllers.CommonController{baseModel, httpUtilFunc, c.DataStore}
 	// Person url mappings
 	router.Handle(apiprefix+"/person",
 		negroni.New(
@@ -162,10 +162,16 @@ func (c UtilityRouter) Routing(router *mux.Router, apiprefix string) {
 
 // MigrateDB ... Create merchant table and other tables that need to work with merchant
 func (c UtilityRouter) MigrateDB() {
-
-	c.Db.AutoMigrate(&utilmodels.Country{}, &utilmodels.RegionState{}, &utilmodels.Addresses{}, &utilmodels.Contacts{}, &utilmodels.Person{}, &utilmodels.IDType{},
-		&utilmodels.PersonIDType{}, &utilmodels.CompanyEntities{}, &utilmodels.Towns{}, &utilmodels.Currency{}, &utilmodels.User{}, &utilmodels.Language{})
-	c.Db.Model(&utilmodels.RegionState{}).AddForeignKey("country_id", "xtut_country(id)", "RESTRICT", "RESTRICT")
+	modelArray := []interface{}{utilmodels.Country{}, utilmodels.RegionState{}, utilmodels.Addresses{}, utilmodels.Contacts{}, utilmodels.Person{}, utilmodels.IDType{},
+		utilmodels.PersonIDType{}, utilmodels.CompanyEntities{}, utilmodels.Towns{}, utilmodels.Currency{}, utilmodels.Language{}}
+	for _, model := range modelArray {
+		fmt.Println(model)
+		c.DataStore.InitSchema(model)
+	}
+	//c.DataStore.InitSchema(modelArray)
+	//, &utilmodels.RegionState{}, &utilmodels.Addresses{}, &utilmodels.Contacts{}, &utilmodels.Person{}, &utilmodels.IDType{},
+	//&utilmodels.PersonIDType{}, &utilmodels.CompanyEntities{}, &utilmodels.Towns{}, &utilmodels.Currency{}, &utilmodels.User{}, &utilmodels.Language{})
+	/*c.Db.Model(&utilmodels.RegionState{}).AddForeignKey("country_id", "xtut_country(id)", "RESTRICT", "RESTRICT")
 	c.Db.Model(&utilmodels.Currency{}).AddForeignKey("country_id", "xtut_country(id)", "RESTRICT", "RESTRICT")
 	c.Db.Model(&utilmodels.Towns{}).AddForeignKey("region_state_id", "xtut_region_state(id)", "RESTRICT", "RESTRICT")
 
@@ -183,7 +189,7 @@ func (c UtilityRouter) MigrateDB() {
 	c.Db.Model(&utilmodels.IDType{}).AddUniqueIndex("idx_id_type_name_issued_by", "name", "issue_by")
 	//c.Db.Model(&utilmodels.PersonIDType{}).AddForeignKey("id_number", "xtut_person_id_type(id)", "RESTRICT", "RESTRICT")
 
-	c.Db.Model(&utilmodels.Person{}).AddUniqueIndex("idx_firstname_lastname_middlename_dob", "last_name", "first_name", "middle_name", "date_of_birth")
+	c.Db.Model(&utilmodels.Person{}).AddUniqueIndex("idx_firstname_lastname_middlename_dob", "last_name", "first_name", "middle_name", "date_of_birth")*/
 	//TownsID
 
 }

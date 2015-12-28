@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/jinzhu/gorm"
 	"github.com/mholt/binding"
 	"github.com/unrolled/render"
 
@@ -17,8 +16,8 @@ import (
 
 //SecurityController ...
 type SecurityController struct {
-	Db           *gorm.DB
 	BaseModel    base.BaseModel
+	DataStore    utility.DataStore
 	HTTPUtilDunc utility.HTTPUtilityFunctions
 }
 
@@ -26,20 +25,32 @@ type SecurityController struct {
 func (sec *SecurityController) Login(w http.ResponseWriter, r *http.Request) {
 	render := render.New(render.Options{})
 	requestUser := new(models.User)
+	personDetail := new(models.Person)
 	errs := binding.Bind(r, requestUser)
 	if errs.Handle(w) {
 		render.JSON(w, 422, errs.Error())
 		return
 	}
 	user := models.User{}
-	query := sec.Db.Where("email = ? or username = ?", requestUser.Email, requestUser.Username).Find(&user)
-
-	if query.Error == gorm.RecordNotFound {
-		render.JSON(w, 404, query.Error.Error())
-	} else if query.Error == nil {
+	//map[string]interface{}{"email": requestUser.Email, "username": requestUser.Username}
+	//query := sec.Db.Where("email = ? or username = ?", requestUser.Email, ).Find(&user)
+	qryparam := map[string]interface{}{"email": requestUser.Email}
+	//orQryparam := map[string]interface{}{"email": requestUser.Email, "username": requestUser.Username}
+	_, err := sec.DataStore.SearchAnyGenericObject(qryparam, &user)
+	if err != nil && err.ErrNo == 1001 {
+		render.JSON(w, 404, err.Error())
+	} else if err == nil {
 		//User exist in database, confirm his password
 		responseStatus, token := services.Login(&user, requestUser.Password)
-		render.JSON(w, responseStatus, string(token))
+		//Get user to person details
+		userPersonParam := map[string]interface{}{"id": &user.PersonID}
+		_, errUserPerson := sec.DataStore.SearchAnyGenericObject(userPersonParam, &personDetail)
+		if errUserPerson == nil {
+			personJSON, _ := json.Marshal(personDetail)
+			render.JSON(w, responseStatus, map[string]interface{}{"token": string(token), "user_detail": string(personJSON)})
+		}
+	} else {
+		panic(err)
 	}
 }
 

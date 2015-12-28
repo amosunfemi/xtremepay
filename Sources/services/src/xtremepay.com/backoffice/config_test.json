@@ -4,12 +4,18 @@
     "port": 3002,
     "mode":"test",
     "apiprefix":"xpay/v1.0",
+    "log": {
+      "context": "xtremepay-test",
+      "format": "%{color}%{time:15:04:05.000} %{shortfunc} ▶ %{level:.4s} %{id:03x}%{color:reset} %{message}",
+      "error_file": "test_error.json",
+      "info_file": "test_info.json"
+    },
     "datastore": {
       "test": {
         "host": "127.0.0.1",
         "port": 5432,
         "database": "xtremepay_test",
-        "user": "postgres",
+        "username": "postgres",
         "password": "sunday123"
       }
     }

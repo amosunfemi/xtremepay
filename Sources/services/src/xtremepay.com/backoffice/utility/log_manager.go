@@ -20,7 +20,7 @@ func (logM *LogManager) InitLog() {
 	var svrlog = log.New(logM.LogContext, logM.LogContext)
 	svrlog.SetHandler(log.MultiHandler(log.StreamHandler(os.Stderr, log.LogfmtFormat()),
 		log.LvlFilterHandler(log.LvlError, log.Must.FileHandler(logM.ErrorFile, log.JsonFormat())),
-		log.LvlFilterHandler(log.LvlInfo, log.Must.FileHandler(logM.ErrorFile, log.JsonFormat()))))
+		log.LvlFilterHandler(log.LvlInfo, log.Must.FileHandler(logM.InfoFile, log.JsonFormat()))))
 
 	logM.Logger = svrlog
 }

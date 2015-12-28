@@ -3,11 +3,9 @@ package controllers
 import (
 	"fmt"
 	"net/http"
-	"reflect"
 	"time"
 
 	"github.com/gorilla/mux"
-	"github.com/jinzhu/gorm"
 	"github.com/mholt/binding"
 	"github.com/unrolled/render"
 	base "xtremepay.com/backoffice/models"
@@ -17,9 +15,9 @@ import (
 
 //CommonController ...
 type CommonController struct {
-	Db           *gorm.DB
 	BaseModel    base.BaseModel
 	HTTPUtilDunc utility.HTTPUtilityFunctions
+	DataStore    utility.DataStore
 }
 
 // CreateLanguage ... create new language
@@ -31,7 +29,6 @@ func (c CommonController) CreateLanguage(res http.ResponseWriter, req *http.Requ
 		r.JSON(res, 422, errs.Error())
 		return
 	}
-
 	bindingErr := language.Validate(req, errs)
 
 	if bindingErr != nil {
@@ -41,13 +38,10 @@ func (c CommonController) CreateLanguage(res http.ResponseWriter, req *http.Requ
 	// save to database
 	p := models.Language{c.BaseModel, language.ISOCode, language.Name}
 
-	tx := c.Db.Begin()
-
-	if err := tx.Create(&p).Error; err != nil {
-		tx.Rollback()
+	err := c.DataStore.SaveDatabaseObject(&p)
+	if err != nil {
 		panic(err)
 	}
-	tx.Commit()
 
 	// render response
 	r.JSON(res, 200, p)
@@ -72,16 +66,16 @@ func (c CommonController) CreateCountry(res http.ResponseWriter, req *http.Reque
 	// save to database
 	p := models.Country{c.BaseModel, country.ISOCode, country.Name, country.RegionStates, country.Language, country.LanguageID}
 
-	tx := c.Db.Begin()
-
-	if err := tx.Create(&p).Error; err != nil {
-		tx.Rollback()
+	err := c.DataStore.SaveDatabaseObject(&p)
+	if err != nil {
+		fmt.Println(err.Error())
 		panic(err)
+	} else {
+		r.JSON(res, 200, p)
 	}
-	tx.Commit()
 
 	// render response
-	r.JSON(res, 200, p)
+
 }
 
 // CreateRegion ... create new region
@@ -104,13 +98,10 @@ func (c CommonController) CreateRegion(res http.ResponseWriter, req *http.Reques
 	// save to database
 	p := models.RegionState{c.BaseModel, region.Name, region.CountryID, region.Towns}
 
-	tx := c.Db.Begin()
-
-	if err := tx.Create(&p).Error; err != nil {
-		tx.Rollback()
+	err := c.DataStore.SaveDatabaseObject(&p)
+	if err != nil {
 		panic(err)
 	}
-	tx.Commit()
 
 	// render response
 	r.JSON(res, 200, p)
@@ -135,13 +126,10 @@ func (c CommonController) CreateTown(res http.ResponseWriter, req *http.Request,
 	// save to database
 	p := models.Towns{c.BaseModel, town.RegionStateID, town.Name}
 
-	tx := c.Db.Begin()
-
-	if err := tx.Create(&p).Error; err != nil {
-		tx.Rollback()
+	err := c.DataStore.SaveDatabaseObject(&p)
+	if err != nil {
 		panic(err)
 	}
-	tx.Commit()
 
 	// render response
 	r.JSON(res, 200, p)
@@ -167,26 +155,27 @@ func (c CommonController) UpdateCountry(res http.ResponseWriter, req *http.Reque
 		return
 	}
 
-	tx := c.Db.Begin()
+	queryDict, _ := c.HTTPUtilDunc.DecodeHTTPBody(req)
 
 	ctryExist := &models.Country{}
-	query := tx.Where("id = ?", id).First(ctryExist)
+	qryparam := map[string]interface{}{"id": id}
+	err := c.DataStore.FetchFirstGenericObject(qryparam, ctryExist)
 	ctryExist.Updatedat = time.Now()
 
-	if query.Error == gorm.RecordNotFound {
-		r.JSON(res, 404, query.Error.Error())
-	} else if query.Error == nil {
+	if err != nil && err.ErrNo == 1001 {
+		r.JSON(res, 404, err.Error())
+	} else if err == nil {
 		ctryExist.Name = country.Name
 		ctryExist.Updatedat = time.Now()
-		if err := tx.Save(&ctryExist).Error; err != nil {
-			tx.Rollback()
+		err := c.DataStore.UpdateDatabaseObject(ctryExist, queryDict)
+		if err != nil {
 			panic(err)
+		} else {
+			r.JSON(res, 200, ctryExist)
 		}
-		tx.Commit()
-		r.JSON(res, 200, ctryExist)
 	} else {
-		fmt.Println(query.Error.Error())
-		panic(query.Error)
+		fmt.Println(err.Error())
+		panic(err)
 	}
 }
 
@@ -209,32 +198,32 @@ func (c CommonController) UpdateTown(res http.ResponseWriter, req *http.Request,
 		r.JSON(res, 422, bindingErr.Error())
 		return
 	}
-
-	tx := c.Db.Begin()
+	queryDict, _ := c.HTTPUtilDunc.DecodeHTTPBody(req)
 
 	twnExist := &models.Towns{}
-	query := tx.Where("id = ?", id).First(twnExist)
+	qryparam := map[string]interface{}{"id": id}
+	err := c.DataStore.FetchFirstGenericObject(qryparam, twnExist)
 	twnExist.Updatedat = time.Now()
 
-	if query.Error == gorm.RecordNotFound {
-		r.JSON(res, 404, query.Error.Error())
-	} else if query.Error == nil {
+	if err != nil && err.ErrNo == 1001 {
+		r.JSON(res, 404, err.Error())
+	} else if err == nil {
 		twnExist.Name = town.Name
 		twnExist.Updatedat = time.Now()
 		twnExist.RegionStateID = town.RegionStateID
-		if err := tx.Save(&twnExist).Error; err != nil {
-			tx.Rollback()
+		err := c.DataStore.UpdateDatabaseObject(twnExist, queryDict)
+		if err != nil {
 			panic(err)
+		} else {
+			r.JSON(res, 200, twnExist)
 		}
-		tx.Commit()
-		r.JSON(res, 200, twnExist)
 	} else {
-		fmt.Println(query.Error.Error())
-		panic(query.Error)
+		fmt.Println(err.Error())
+		panic(err)
 	}
 }
 
-// UpdateRegion ... update a merchant by id
+// UpdateRegion ... Update a Region by ID
 func (c CommonController) UpdateRegion(res http.ResponseWriter, req *http.Request, next http.HandlerFunc) {
 	r := render.New(render.Options{})
 	vars := mux.Vars(req)
@@ -246,6 +235,7 @@ func (c CommonController) UpdateRegion(res http.ResponseWriter, req *http.Reques
 		r.JSON(res, 422, errs.Error())
 		return
 	}
+	queryDict, _ := c.HTTPUtilDunc.DecodeHTTPBody(req)
 
 	bindingErr := region.Validate(req, errs)
 
@@ -254,27 +244,31 @@ func (c CommonController) UpdateRegion(res http.ResponseWriter, req *http.Reques
 		return
 	}
 
-	tx := c.Db.Begin()
-
 	regionExist := &models.RegionState{}
-	query := tx.Where("id = ?", id).First(regionExist)
+	//query := tx.Where("id = ?", id).First(regionExist)
+
+	qryparam := map[string]interface{}{"id": id}
+	err := c.DataStore.FetchFirstGenericObject(qryparam, regionExist)
+
 	regionExist.Updatedat = time.Now()
 
-	if query.Error == gorm.RecordNotFound {
-		r.JSON(res, 404, query.Error.Error())
-	} else if query.Error == nil {
+	if err != nil && err.ErrNo == 1001 {
+		r.JSON(res, 404, err.Error())
+	} else if err == nil {
 		regionExist.Name = region.Name
 		regionExist.Updatedat = time.Now()
 		regionExist.CountryID = region.CountryID
-		if err := tx.Save(&regionExist).Error; err != nil {
-			tx.Rollback()
+		//UpdateDatabaseObject
+		err := c.DataStore.UpdateDatabaseObject(regionExist, queryDict)
+		if err != nil {
 			panic(err)
+		} else {
+			r.JSON(res, 200, regionExist)
 		}
-		tx.Commit()
-		r.JSON(res, 200, regionExist)
+
 	} else {
-		fmt.Println(query.Error.Error())
-		panic(query.Error)
+		fmt.Println(err.Error())
+		panic(err)
 	}
 }
 
@@ -287,23 +281,13 @@ func (c CommonController) SearchCountryGeneric(res http.ResponseWriter, req *htt
 		r.JSON(res, 422, "Search Parameter is mandatory")
 		return
 	}
-	queryDict, err := c.HTTPUtilDunc.DecodeHTTPBody(req)
-	//err := json.Unmarshal([]byte(queryString), &queryDict)
+	country := []models.Country{}
+	regions, err := c.genericSearch(&country, req)
 	if err == nil {
-		country := []models.Country{}
-		query := c.Db.Where(queryDict).First(&country)
-
-		if query.Error == gorm.RecordNotFound {
-			r.JSON(res, 404, query.Error.Error())
-		} else if query.Error == nil {
-			r.JSON(res, 200, country)
-		} else {
-			panic(query.Error)
-		}
-	} else {
-		//panic(err)
-		r.JSON(res, 422, "Incorrect query format")
+		r.JSON(res, 200, regions)
+		return
 	}
+	r.JSON(res, 400, err.Error())
 }
 
 // SearchRegionStateGeneric ... Search Country by any field
@@ -343,16 +327,14 @@ func (c CommonController) SearchTown(res http.ResponseWriter, req *http.Request,
 }
 
 // genericSearch ... Search for any type
-func (c CommonController) genericSearch(entity interface{}, req *http.Request) (interface{}, error) {
+func (c CommonController) genericSearch(entity interface{}, req *http.Request) (interface{}, *utility.DataStoreError) {
 	queryDict, err := c.HTTPUtilDunc.DecodeHTTPBody(req)
-	entities := []interface{}{entity}
+	//entities := []interface{}{entity}
 	if err == nil {
-		fmt.Println(reflect.TypeOf(entities))
-		query := c.Db.Where(queryDict).Find(entity)
-		if query.Error == gorm.RecordNotFound {
-			return entity, query.Error
+		_, err := c.DataStore.SearchAnyGenericObject(queryDict, entity)
+		if err != nil {
+			return entity, err
 		}
-		return entity, nil
 	}
 	return entity, nil
 }
@@ -365,15 +347,17 @@ func (c CommonController) ShowCountry(res http.ResponseWriter, req *http.Request
 
 	// find in the database
 	country := &models.Country{}
-	query := c.Db.Where("id = ?", id).First(country)
 
-	if query.Error == gorm.RecordNotFound {
-		r.JSON(res, 404, query.Error.Error())
-	} else if query.Error == nil {
+	qryparam := map[string]interface{}{"id": id}
+	err := c.DataStore.FetchFirstGenericObject(qryparam, &country)
+
+	if err != nil && err.ErrNo == 1001 {
+		r.JSON(res, 404, err.Error())
+	} else if err == nil {
+		//User exist in database, confirm his password
 		r.JSON(res, 200, country)
 	} else {
-		fmt.Println(query.Error.Error())
-		panic(query.Error)
+		panic(err)
 	}
 }
 
@@ -383,16 +367,15 @@ func (c CommonController) FetchAllCountries(res http.ResponseWriter, req *http.R
 
 	// find in the database
 	countries := []models.Country{}
+	err := c.DataStore.FetchAllGenericObject(&countries)
 
-	query := c.Db.Find(&countries)
-
-	if query.Error == gorm.RecordNotFound {
-		r.JSON(res, 404, query.Error.Error())
-	} else if query.Error == nil {
+	if err != nil && err.ErrNo == 1001 {
+		r.JSON(res, 404, err.Error())
+	} else if err == nil {
+		//User exist in database, confirm his password
 		r.JSON(res, 200, countries)
 	} else {
-		fmt.Println(query.Error.Error())
-		panic(query.Error)
+		panic(err)
 	}
 }
 
@@ -405,15 +388,16 @@ func (c CommonController) FetchCountryRegion(res http.ResponseWriter, req *http.
 	// find in the database
 	regions := []models.RegionState{}
 
-	query := c.Db.Where("country_id = ?", countryID).Find(&regions)
+	qryparam := map[string]interface{}{"country_id": countryID}
+	_, err := c.DataStore.SearchAnyGenericObject(qryparam, &regions)
 
-	if query.Error == gorm.RecordNotFound {
-		r.JSON(res, 404, query.Error.Error())
-	} else if query.Error == nil {
+	if err != nil && err.ErrNo == 1001 {
+		r.JSON(res, 404, err.Error())
+	} else if err == nil {
+		//User exist in database, confirm his password
 		r.JSON(res, 200, regions)
 	} else {
-		fmt.Println(query.Error.Error())
-		panic(query.Error)
+		panic(err)
 	}
 }
 
@@ -425,15 +409,15 @@ func (c CommonController) FetchRegionTowns(res http.ResponseWriter, req *http.Re
 
 	// find in the database
 	towns := []models.Towns{}
+	qryparam := map[string]interface{}{"region_state_id": regionID}
+	_, err := c.DataStore.SearchAnyGenericObject(qryparam, &towns)
 
-	query := c.Db.Where("region_state_id = ?", regionID).Find(&towns)
-
-	if query.Error == gorm.RecordNotFound {
-		r.JSON(res, 404, query.Error.Error())
-	} else if query.Error == nil {
+	if err != nil && err.ErrNo == 1001 {
+		r.JSON(res, 404, err.Error())
+	} else if err == nil {
+		//User exist in database, confirm his password
 		r.JSON(res, 200, towns)
 	} else {
-		fmt.Println(query.Error.Error())
-		panic(query.Error)
+		panic(err)
 	}
 }
