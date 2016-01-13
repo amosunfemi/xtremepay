@@ -61,28 +61,46 @@ func (c ServiceManager) LoadConfig(configFile string) {
 
 }
 
-// LoadService ... This start any service based on the details read from
+// LoadService ... This start any service based on the details read from the configuration file
+/*
+To load client service you dont need a data store.
+*/
 func (c ServiceManager) LoadService() string {
 	serviceMode := c.ViperConfig.GetString("service.mode")
 	serviceName := c.ViperConfig.GetString("service.name")
 	apiPrefix := c.ViperConfig.GetString("service.apiprefix")
-	dbDetail := c.ViperConfig.GetStringMap(fmt.Sprintf("service.datastore.%s", serviceMode))
-	logDetail := c.ViperConfig.GetStringMap("service.log")
-	port := c.ViperConfig.GetInt("service.port")
 	dataStore := new(utility.DataStore)
 	logManager := new(utility.LogManager)
-	fmt.Println(dbDetail["storetype"])
+	logDetail := c.ViperConfig.GetStringMap("service.log")
+	apiServices := c.ViperConfig.GetStringMapString("service.api_services")
+	if serviceName != "client" {
+		dbDetail := c.ViperConfig.GetStringMap(fmt.Sprintf("service.datastore.%s", serviceMode))
+		dataStore.InitDataStore(dbDetail["storetype"].(string), dbDetail, logManager.Logger)
+	}
+
+	port := c.ViperConfig.GetInt("service.port")
+
 	logManager.LogContext = logDetail["context"].(string)
 	logManager.ErrorFile = logDetail["error_file"].(string)
 	logManager.InfoFile = logDetail["info_file"].(string)
-	fmt.Println(dbDetail)
+	logManager.DebugFile = logDetail["debug_file"].(string)
 	logManager.InitLog()
-	dataStore.InitDataStore(dbDetail["storetype"].(string), dbDetail, logManager.Logger)
+
 	//routeList := []map[string]interface{}{}
 	switch serviceName {
+	case "client":
+		fmt.Println(apiServices)
+		clientService := routers.ClientRouter{apiServices, logManager}
+		clientService.Routing(c.Router, apiPrefix)
+		c.NegroniServer.Use(recovery.JSONRecovery(true))
+		c.NegroniServer.Use(c.Cors)
+		c.NegroniServer.UseHandler(c.Router)
+		logManager.Logger.Info("Client Service Started ")
+		c.NegroniServer.Run(fmt.Sprintf(":%d", port))
+		return "Client Service Started"
+
 	case "merchant":
 
-		//if Err == nil {
 		merchantService := routers.MerchantRouter{*dataStore}
 		merchantService.MigrateDB()
 		merchantService.Routing(c.Router, apiPrefix)
@@ -92,15 +110,11 @@ func (c ServiceManager) LoadService() string {
 		logManager.Logger.Info("Merchant Service Started ")
 		c.NegroniServer.Run(fmt.Sprintf(":%d", port))
 		return "Merchant Service Started"
-		//} else {
-		//	fmt.Println(Err.Error())
-		//	return Err.Error()
-		//}
 
 	case "utility":
 
 		//if Err == nil {
-		utilityService := routers.UtilityRouter{*dataStore}
+		utilityService := routers.UtilityRouter{*dataStore, logManager}
 		utilityService.MigrateDB()
 		utilityService.Routing(c.Router, apiPrefix)
 		c.NegroniServer.Use(recovery.JSONRecovery(true))

@@ -8,7 +8,8 @@
       "context": "xtremepay-security",
       "format": "%{color}%{time:15:04:05.000} %{shortfunc} ▶ %{level:.4s} %{id:03x}%{color:reset} %{message}",
       "error_file": "security_error.json",
-      "info_file": "security_info.json"
+      "info_file": "security_info.json",
+      "debug_file": "client_debug.json"
     },
     "datastore": {
       "dev": {

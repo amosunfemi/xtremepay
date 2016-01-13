@@ -221,3 +221,44 @@ func (merben *Beneficiary) FieldMap(req *http.Request) binding.FieldMap {
 func (merben Beneficiary) Validate(req *http.Request, errs binding.Errors) binding.Errors {
 	return errs
 }
+
+// APIMerchant ...
+type APIMerchant struct {
+	models.BaseModel
+	MerchantID int
+	AccountNo  string
+	APIKey     string
+	APISecret  string
+}
+
+// TableName ...
+func (api APIMerchant) TableName() string {
+	return "xtmc_merchant_api"
+}
+
+// FieldMap ...
+func (api *APIMerchant) FieldMap(req *http.Request) binding.FieldMap {
+	return binding.FieldMap{
+		&api.MerchantID: binding.Field{
+			Form:     "MerchantID",
+			Required: true,
+		},
+		&api.AccountNo: binding.Field{
+			Form:     "AccountNo",
+			Required: true,
+		},
+		&api.APIKey: binding.Field{
+			Form:     "APIKey",
+			Required: true,
+		},
+		&api.APISecret: binding.Field{
+			Form:     "APISecret",
+			Required: true,
+		},
+	}
+}
+
+// Validate ...
+func (api *APIMerchant) Validate(req *http.Request, errs binding.Errors) binding.Errors {
+	return errs
+}

@@ -1,3 +1,7 @@
+/*
+User route. User Management Microservice RESTful service defintion.
+*/
+
 package routers
 
 import (
@@ -20,7 +24,7 @@ type UserRouter struct {
 
 // Routing ... list of routing services
 func (c UserRouter) Routing(router *mux.Router, apiprefix string) {
-	baseModel := base.BaseModel{Status: "ACTIVE", Createdat: time.Now()}
+	baseModel := base.BaseModel{Status: "ACTIVE", CreatedAt: time.Now()}
 	httpUtilFunc := utilFunc.HTTPUtilityFunctions{}
 	userController := controllers.UserController{baseModel, httpUtilFunc, c.DataStore}
 	securityController := controllers.SecurityController{baseModel, c.DataStore, httpUtilFunc}

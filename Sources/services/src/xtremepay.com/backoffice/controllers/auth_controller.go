@@ -39,19 +39,18 @@ func (sec *SecurityController) Login(w http.ResponseWriter, r *http.Request) {
 	_, err := sec.DataStore.SearchAnyGenericObject(qryparam, &user)
 	if err != nil && err.ErrNo == 1001 {
 		render.JSON(w, 404, err.Error())
-	} else if err == nil {
-		//User exist in database, confirm his password
-		responseStatus, token := services.Login(&user, requestUser.Password)
-		//Get user to person details
-		userPersonParam := map[string]interface{}{"id": &user.PersonID}
-		_, errUserPerson := sec.DataStore.SearchAnyGenericObject(userPersonParam, &personDetail)
-		if errUserPerson == nil {
-			personJSON, _ := json.Marshal(personDetail)
-			render.JSON(w, responseStatus, map[string]interface{}{"token": string(token), "user_detail": string(personJSON)})
-		}
-	} else {
-		panic(err)
+	} //else if err == nil {
+	//User exist in database, confirm his password
+	responseStatus, token := services.Login(&user, requestUser.Password)
+	//Get user to person details
+	userPersonParam := map[string]interface{}{"id": &user.PersonID}
+	_, errUserPerson := sec.DataStore.SearchAnyGenericObject(userPersonParam, &personDetail)
+	if errUserPerson != nil {
+		render.JSON(w, 422, errUserPerson.Error())
 	}
+	personJSON, _ := json.Marshal(personDetail)
+	render.JSON(w, responseStatus, map[string]interface{}{"token": string(token), "user_detail": string(personJSON)})
+
 }
 
 // RefreshToken ...

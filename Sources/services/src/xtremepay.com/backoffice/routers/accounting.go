@@ -1,3 +1,7 @@
+/*
+Account route. Account Microservice RESTful service defintion.
+*/
+
 package routers
 
 import (
@@ -24,7 +28,7 @@ type AccountRouter struct {
 
 // Routing ... list of routing services
 func (c AccountRouter) Routing(router *mux.Router, apiprefix string) {
-	baseModel := base.BaseModel{Status: "ACTIVE", Createdat: time.Now()}
+	baseModel := base.BaseModel{Status: "ACTIVE", CreatedAt: time.Now()}
 	httpUtilFunc := utilFunc.HTTPUtilityFunctions{}
 	account := controllers.AccountController{c.DataStore, baseModel, httpUtilFunc}
 
@@ -56,27 +60,6 @@ func (c AccountRouter) Routing(router *mux.Router, apiprefix string) {
 			negroni.HandlerFunc(authentication.RequireTokenAuthentication),
 			negroni.HandlerFunc(account.CreateAccountFundMapping),
 		)).Methods("POST")
-	/*c.RouteList = append(c.RouteList, map[string]interface{}{"url": "/account",
-		"func":   [...]handlerFunc{authentication.RequireTokenAuthentication, account.CreateAccount},
-		"method": "POST"})
-
-	//qryparam := map[string]interface{}{"url": "/account/category", "func": testfunc, "method": "POST"}
-	c.RouteList = append(c.RouteList, map[string]interface{}{"url": "/account/category",
-		"func":   [...]handlerFunc{authentication.RequireTokenAuthentication, account.CreateAccountCategory},
-		"method": "POST"})
-
-	c.RouteList = append(c.RouteList, map[string]interface{}{"url": "/account/fundsource",
-		"func":   [...]handlerFunc{authentication.RequireTokenAuthentication, account.CreateAccountFundSource},
-		"method": "POST"})
-
-	c.RouteList = append(c.RouteList, map[string]interface{}{"url": "/account/limit",
-		"func":   [...]handlerFunc{authentication.RequireTokenAuthentication, account.CreateAccountLimit},
-		"method": "POST"})
-
-	c.RouteList = append(c.RouteList, map[string]interface{}{"url": "/account/funding",
-		"func":   [...]handlerFunc{authentication.RequireTokenAuthentication, account.CreateAccountFundMapping},
-		"method": "POST"})*/
-	// Customer Mappings
 
 }
 

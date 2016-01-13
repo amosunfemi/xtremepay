@@ -222,6 +222,7 @@ func (con *Contacts) FieldMap(req *http.Request) binding.FieldMap {
 type CompanyEntities struct {
 	models.BaseModel
 	RegisteredName  string      `json:"RegisteredName"`
+	CompanyRegNo		string			`json:"CompanyRegNo"`
 	Addresses       []Addresses `json:"Addresses"`
 	Contacts        []Contacts  `json:"Contacts"`
 	CountryID       int         `json:"CountryID"`

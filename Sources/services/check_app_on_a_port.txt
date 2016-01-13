@@ -1,1 +1,4 @@
 sudo lsof -i :3001
+sudo lsof -i :3003
+sudo lsof -i :3004
+sudo lsof -i :3010

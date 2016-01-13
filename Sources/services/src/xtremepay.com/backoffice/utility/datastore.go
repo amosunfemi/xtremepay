@@ -51,6 +51,30 @@ func (datastore *DataStore) UpdateDatabaseObject(dbobj interface{}, changeVal ma
 	return err
 }
 
+//DeleteDatabaseObjectWithParam ...
+func (datastore *DataStore) DeleteDatabaseObjectWithParam(dbobj interface{}, fldString string, values int) *DataStoreError {
+	var err *DataStoreError
+	if datastore.StoreType == "rdbms" {
+		errInt, rdbmsErr := datastore.RDBMS.DeleteDatabaseObjectWithParam(dbobj, fldString, values)
+		if rdbmsErr != nil {
+			err = datastore.composeCustomError(rdbmsErr, errInt)
+		}
+	}
+	return err
+}
+
+//DeleteDatabaseObject ...
+func (datastore *DataStore) DeleteDatabaseObject(dbobj interface{}, changeVal map[string]interface{}) *DataStoreError {
+	var err *DataStoreError
+	if datastore.StoreType == "rdbms" {
+		errInt, rdbmsErr := datastore.RDBMS.DeleteDatabaseObject(dbobj, changeVal)
+		if rdbmsErr != nil {
+			err = datastore.composeCustomError(rdbmsErr, errInt)
+		}
+	}
+	return err
+}
+
 //SearchAnyGenericObject ... This method search through with any map given to search a table
 func (datastore *DataStore) SearchAnyGenericObject(queryDict map[string]interface{}, entity interface{}) (interface{}, *DataStoreError) {
 	var err *DataStoreError
@@ -183,10 +207,9 @@ func (rdbms *RDBMSImpl) SaveDatabaseObject(p interface{}) (int, error) {
 		errInt = 1002
 		fmt.Println(err.Error())
 		return errInt, err
-	} else {
-		tx.Commit()
-		return errInt, err
 	}
+	tx.Commit()
+	return errInt, err
 
 }
 
@@ -200,6 +223,34 @@ func (rdbms *RDBMSImpl) UpdateDatabaseObject(dbobj interface{}, changeVal map[st
 		err = txerr
 		errInt = 1002
 	}
+	return errInt, err
+}
+
+//DeleteDatabaseObject ...
+func (rdbms *RDBMSImpl) DeleteDatabaseObject(dbobj interface{}, changeVal map[string]interface{}) (int, error) {
+	var err error
+	var errInt = 1000
+	tx := rdbms.DB.Begin()
+	if txerr := tx.Model(&dbobj).Where("deleted_at IS NULL").Updates(changeVal).Error; err != nil {
+		tx.Rollback()
+		err = txerr
+		errInt = 1002
+	}
+	tx.Commit()
+	return errInt, err
+}
+
+//DeleteDatabaseObjectWithParam ...
+func (rdbms *RDBMSImpl) DeleteDatabaseObjectWithParam(dbobj interface{}, fldString string, values int) (int, error) {
+	var err error
+	var errInt = 1000
+	tx := rdbms.DB.Begin()
+	if txerr := tx.Delete(dbobj).Error; err != nil {
+		tx.Rollback()
+		err = txerr
+		errInt = 1002
+	}
+	tx.Commit()
 	return errInt, err
 }
 

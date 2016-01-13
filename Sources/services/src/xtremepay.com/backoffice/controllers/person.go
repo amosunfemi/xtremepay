@@ -1,11 +1,14 @@
 package controllers
 
 import (
+	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/gorilla/mux"
 	"github.com/mholt/binding"
 	"github.com/unrolled/render"
+	log "gopkg.in/inconshreveable/log15.v2"
 	base "xtremepay.com/backoffice/models"
 	models "xtremepay.com/backoffice/models/util"
 	"xtremepay.com/backoffice/utility"
@@ -14,13 +17,14 @@ import (
 //PersonController ...
 type PersonController struct {
 	BaseModel    base.BaseModel
-	HTTPUtilDunc utility.HTTPUtilityFunctions
+	HTTPUtilFunc utility.HTTPUtilityFunctions
 	DataStore    utility.DataStore
+	Logger       log.Logger
 }
 
 // genericSearch ... Search for any type
 func (c PersonController) genericSearch(entity interface{}, req *http.Request) (interface{}, error) {
-	queryDict, err := c.HTTPUtilDunc.DecodeHTTPBody(req)
+	queryDict, err := c.HTTPUtilFunc.DecodeHTTPBody(req)
 	//entities := []interface{}{entity}
 	if err == nil {
 		_, err := c.DataStore.SearchAnyGenericObject(queryDict, &entity)
@@ -193,7 +197,7 @@ func (c PersonController) CreateContact(res http.ResponseWriter, req *http.Reque
 }
 
 // CreatePerson ... create new person
-func (c PersonController) CreatePerson(res http.ResponseWriter, req *http.Request, next http.HandlerFunc) {
+func (c PersonController) CreatePerson(res http.ResponseWriter, req *http.Request) {
 	r := render.New(render.Options{})
 	person := new(models.Person)
 	errs := binding.Bind(req, person)
@@ -219,6 +223,28 @@ func (c PersonController) CreatePerson(res http.ResponseWriter, req *http.Reques
 
 	// render response
 	r.JSON(res, 200, p)
+}
+
+// DeletePerson ... create new person
+func (c PersonController) DeletePerson(res http.ResponseWriter, req *http.Request) {
+	r := render.New(render.Options{})
+	vars := mux.Vars(req)
+	person := new(models.Person)
+	i, _ := strconv.Atoi(vars["person_id"])
+	qryparam := fmt.Sprintf("id = ?")
+	// save to database
+	//p := models.Person{c.BaseModel, person.FirstName, person.MiddleName, person.LastName, person.Title, person.Gender,
+	//	person.Occupation, person.DateOfBirth, person.Addresses, person.Contacts, person.PersonIDType, person.CountryOfOriginID, person.CountryOfResidenceID}
+	person.ID = i
+	//qryparam := map[string]interface{}{"deleted_at": time.Now()}
+
+	err := c.DataStore.DeleteDatabaseObjectWithParam(&person, qryparam, i)
+	if err != nil {
+		panic(err)
+	}
+
+	// render response
+	r.JSON(res, 200, person)
 }
 
 // CreateAddress ... add new address to a person

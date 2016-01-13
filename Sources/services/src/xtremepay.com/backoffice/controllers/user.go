@@ -56,6 +56,7 @@ func (u UserController) CreateUser(res http.ResponseWriter, req *http.Request) {
 	if err != nil {
 		panic(err)
 	}
+	p.Password = ""
 	// render response
 	r.JSON(res, 200, p)
 }

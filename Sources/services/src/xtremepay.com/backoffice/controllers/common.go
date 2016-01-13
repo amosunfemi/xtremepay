@@ -160,13 +160,13 @@ func (c CommonController) UpdateCountry(res http.ResponseWriter, req *http.Reque
 	ctryExist := &models.Country{}
 	qryparam := map[string]interface{}{"id": id}
 	err := c.DataStore.FetchFirstGenericObject(qryparam, ctryExist)
-	ctryExist.Updatedat = time.Now()
+	ctryExist.UpdatedAt = time.Now()
 
 	if err != nil && err.ErrNo == 1001 {
 		r.JSON(res, 404, err.Error())
 	} else if err == nil {
 		ctryExist.Name = country.Name
-		ctryExist.Updatedat = time.Now()
+		ctryExist.UpdatedAt = time.Now()
 		err := c.DataStore.UpdateDatabaseObject(ctryExist, queryDict)
 		if err != nil {
 			panic(err)
@@ -203,13 +203,13 @@ func (c CommonController) UpdateTown(res http.ResponseWriter, req *http.Request,
 	twnExist := &models.Towns{}
 	qryparam := map[string]interface{}{"id": id}
 	err := c.DataStore.FetchFirstGenericObject(qryparam, twnExist)
-	twnExist.Updatedat = time.Now()
+	twnExist.UpdatedAt = time.Now()
 
 	if err != nil && err.ErrNo == 1001 {
 		r.JSON(res, 404, err.Error())
 	} else if err == nil {
 		twnExist.Name = town.Name
-		twnExist.Updatedat = time.Now()
+		twnExist.UpdatedAt = time.Now()
 		twnExist.RegionStateID = town.RegionStateID
 		err := c.DataStore.UpdateDatabaseObject(twnExist, queryDict)
 		if err != nil {
@@ -250,13 +250,13 @@ func (c CommonController) UpdateRegion(res http.ResponseWriter, req *http.Reques
 	qryparam := map[string]interface{}{"id": id}
 	err := c.DataStore.FetchFirstGenericObject(qryparam, regionExist)
 
-	regionExist.Updatedat = time.Now()
+	regionExist.UpdatedAt = time.Now()
 
 	if err != nil && err.ErrNo == 1001 {
 		r.JSON(res, 404, err.Error())
 	} else if err == nil {
 		regionExist.Name = region.Name
-		regionExist.Updatedat = time.Now()
+		regionExist.UpdatedAt = time.Now()
 		regionExist.CountryID = region.CountryID
 		//UpdateDatabaseObject
 		err := c.DataStore.UpdateDatabaseObject(regionExist, queryDict)

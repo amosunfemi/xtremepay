@@ -1,3 +1,7 @@
+/*
+Utility route. Utility Microservice RESTful service defintion.
+*/
+
 package routers
 
 import (
@@ -12,25 +16,26 @@ import (
 	controllers "xtremepay.com/backoffice/controllers"
 	base "xtremepay.com/backoffice/models"
 	utilmodels "xtremepay.com/backoffice/models/util"
+	"xtremepay.com/backoffice/utility"
 )
 
 // UtilityRouter ... The Utility router provide services for most of the utility functionalities in the system. Person, Address, Contact,
 type UtilityRouter struct {
 	DataStore utilFunc.DataStore
+	Logger    *utility.LogManager
 }
 
 // Routing ... list of routing services
 func (c UtilityRouter) Routing(router *mux.Router, apiprefix string) {
-	baseModel := base.BaseModel{Status: "ACTIVE", Createdat: time.Now()}
+	baseModel := base.BaseModel{Status: "ACTIVE", CreatedAt: time.Now()}
 	httpUtilFunc := utilFunc.HTTPUtilityFunctions{}
-	personController := controllers.PersonController{baseModel, httpUtilFunc, c.DataStore}
-	utilController := controllers.CommonController{baseModel, httpUtilFunc, c.DataStore}
+	personController := controllers.PersonController{BaseModel: baseModel, HTTPUtilFunc: httpUtilFunc, DataStore: c.DataStore, Logger: c.Logger.Logger}
+	utilController := controllers.CommonController{BaseModel: baseModel, HTTPUtilDunc: httpUtilFunc, DataStore: c.DataStore}
 	// Person url mappings
-	router.Handle(apiprefix+"/person",
-		negroni.New(
-			negroni.HandlerFunc(authentication.RequireTokenAuthentication),
-			negroni.HandlerFunc(personController.CreatePerson),
-		)).Methods("POST")
+
+	router.HandleFunc(apiprefix+"/person", personController.CreatePerson).Methods("POST")
+	router.HandleFunc(apiprefix+"/person/{person_id}", personController.DeletePerson).Methods("DELETE")
+
 	router.Handle(apiprefix+"/address",
 		negroni.New(
 			negroni.HandlerFunc(authentication.RequireTokenAuthentication),

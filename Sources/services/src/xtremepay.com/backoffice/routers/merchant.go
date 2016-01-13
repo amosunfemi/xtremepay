@@ -1,3 +1,6 @@
+/*
+Merchant route. Merchant Microservice RESTful service defintion.
+*/
 package routers
 
 import (
@@ -21,7 +24,7 @@ type MerchantRouter struct {
 
 // Routing ... list of routing services
 func (c MerchantRouter) Routing(router *mux.Router, apiprefix string) {
-	baseModel := base.BaseModel{Status: "ACTIVE", Createdat: time.Now()}
+	baseModel := base.BaseModel{Status: "ACTIVE", CreatedAt: time.Now()}
 	httpUtilFunc := utilFunc.HTTPUtilityFunctions{}
 	merchant := controllers.MerchantController{baseModel, httpUtilFunc, c.DataStore}
 	// Merchant url mappings
