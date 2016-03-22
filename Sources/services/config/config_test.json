@@ -1,0 +1,26 @@
+{
+  "service": {
+    "name": "merchant",
+    "port": 3002,
+    "mode":"test",
+    "apiprefix":"xpay/v1.0",
+    "log": {
+      "context": "xtremepay-test",
+      "format": "%{color}%{time:15:04:05.000} %{shortfunc} ▶ %{level:.4s} %{id:03x}%{color:reset} %{message}",
+      "log_dir":"../../../log/test/",
+      "error_file": "error.json",
+      "info_file": "info.json",
+      "debug_file": "debug.json",
+      "crit_file": "crit.json"
+    },
+    "datastore": {
+      "test": {
+        "host": "127.0.0.1",
+        "port": 5432,
+        "database": "xtremepay_test",
+        "username": "postgres",
+        "password": "sunday123"
+      }
+    }
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "service": {
+    "name": "client",
+    "port": 3010,
+    "mode":"dev",
+    "apiprefix":"/xtremepay/v1.0/client",
+    "rabbitmq":{
+      "url":"amqp://guest:guest@localhost:5672/",
+      "mail_queue":"mail_task_queue",
+      "sms_queue":"sms_task_queue"
+    },
+    "log": {
+      "context": "xtremepay-client",
+      "format": "%{color}%{time:15:04:05.000} %{shortfunc} ▶ %{level:.4s} %{id:03x}%{color:reset} %{message}",
+      "log_dir":"../../../log/client/",
+      "error_file": "error.json",
+      "info_file": "info.json",
+      "debug_file": "debug.json",
+      "crit_file": "crit.json"
+    },
+    "api_services": {
+      "auth": "http://localhost:3004/xtremepay/v1.0/security",
+      "utility": "http://localhost:3003/xtremepay/v1.0/utility"
+    }
+  }
+}

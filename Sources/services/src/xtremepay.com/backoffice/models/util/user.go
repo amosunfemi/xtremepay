@@ -46,6 +46,14 @@ func (c *User) FieldMap(req *http.Request) binding.FieldMap {
 			Form:     "PersonID",
 			Required: true,
 		},
+		&c.Password: binding.Field{
+			Form:     "Password",
+			Required: true,
+		},
+		&c.PhoneNum: binding.Field{
+			Form:     "PhoneNum",
+			Required: true,
+		},
 	}
 }
 

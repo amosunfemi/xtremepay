@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/mholt/binding"
 	"github.com/unrolled/render"
 
 	services "xtremepay.com/backoffice/logic"
@@ -24,25 +23,40 @@ type SecurityController struct {
 // Login ...
 func (sec *SecurityController) Login(w http.ResponseWriter, r *http.Request) {
 	render := render.New(render.Options{})
-	requestUser := new(models.User)
+	queryDict, errReq := sec.HTTPUtilDunc.DecodeHTTPBody(r)
+	qryparam := map[string]interface{}{}
+	if errReq != nil {
+		//u.Logger.Error(errReq.Error())
+		panic(errReq)
+	}
+	username, usrExists := queryDict["Username"].(string)
+	password, exists := queryDict["Password"].(string)
+	email, emailExists := queryDict["Email"].(string)
 	personDetail := new(models.Person)
-	errs := binding.Bind(r, requestUser)
-	if errs.Handle(w) {
-		render.JSON(w, 422, errs.Error())
+	if !exists {
+		render.JSON(w, 422, map[string]interface{}{"msg": "Invalid Data"})
 		return
 	}
 	user := models.User{}
-	//map[string]interface{}{"email": requestUser.Email, "username": requestUser.Username}
-	//query := sec.Db.Where("email = ? or username = ?", requestUser.Email, ).Find(&user)
-	qryparam := map[string]interface{}{"email": requestUser.Email}
-	//orQryparam := map[string]interface{}{"email": requestUser.Email, "username": requestUser.Username}
+	if usrExists {
+		qryparam["username"] = username
+	}
+	if emailExists {
+		qryparam["email"] = email
+	}
 	_, err := sec.DataStore.SearchAnyGenericObject(qryparam, &user)
 	if err != nil && err.ErrNo == 1001 {
-		render.JSON(w, 404, err.Error())
-	} //else if err == nil {
-	//User exist in database, confirm his password
-	responseStatus, token := services.Login(&user, requestUser.Password)
+		if err != nil && err.ErrNo == 1001 {
+			render.JSON(w, 404, err.Error())
+			return
+		}
+	}
+	responseStatus, token := services.Login(&user, password)
 	//Get user to person details
+	if responseStatus == 401 {
+		render.JSON(w, responseStatus, map[string]interface{}{"msg": "Unauthorized"})
+		return
+	}
 	userPersonParam := map[string]interface{}{"id": &user.PersonID}
 	_, errUserPerson := sec.DataStore.SearchAnyGenericObject(userPersonParam, &personDetail)
 	if errUserPerson != nil {

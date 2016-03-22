@@ -67,7 +67,14 @@ func (backend *JWTAuthenticationBackend) Authenticate(user *util.User, password 
 	}*/
 	user.UUID = uuid.New()
 	//fmt.Println(bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(hashedPassword)))
-	return user.Username == user.Username && bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)) == nil
+	fmt.Println(password)
+	fmt.Println(user.Password)
+	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
+	if err != nil {
+		fmt.Println(err.Error())
+		return false
+	}
+	return true
 }
 
 func (backend *JWTAuthenticationBackend) getTokenRemainingValidity(timestamp interface{}) int {

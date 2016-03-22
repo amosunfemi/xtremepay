@@ -75,6 +75,18 @@ func (datastore *DataStore) DeleteDatabaseObject(dbobj interface{}, changeVal ma
 	return err
 }
 
+//DeleteDatabaseObjectPermanent ...
+func (datastore *DataStore) DeleteDatabaseObjectPermanent(dbobj interface{}) *DataStoreError {
+	var err *DataStoreError
+	if datastore.StoreType == "rdbms" {
+		errInt, rdbmsErr := datastore.RDBMS.DeleteDatabaseObjectPermanent(dbobj)
+		if rdbmsErr != nil {
+			err = datastore.composeCustomError(rdbmsErr, errInt)
+		}
+	}
+	return err
+}
+
 //SearchAnyGenericObject ... This method search through with any map given to search a table
 func (datastore *DataStore) SearchAnyGenericObject(queryDict map[string]interface{}, entity interface{}) (interface{}, *DataStoreError) {
 	var err *DataStoreError
@@ -218,11 +230,15 @@ func (rdbms *RDBMSImpl) UpdateDatabaseObject(dbobj interface{}, changeVal map[st
 	var err error
 	var errInt = 1000
 	tx := rdbms.DB.Begin()
-	if txerr := tx.Model(&dbobj).Updates(&changeVal).Error; err != nil {
-		tx.Rollback()
+	txerr := tx.Model(dbobj).Updates(changeVal).Error
+	if txerr != nil { //:= tx.Model(&dbobj).Updates(changeVal).Error; err
+		fmt.Println(txerr)
 		err = txerr
+		tx.Rollback()
+		//err = txerr
 		errInt = 1002
 	}
+	tx.Commit()
 	return errInt, err
 }
 
@@ -235,6 +251,23 @@ func (rdbms *RDBMSImpl) DeleteDatabaseObject(dbobj interface{}, changeVal map[st
 		tx.Rollback()
 		err = txerr
 		errInt = 1002
+		return errInt, err
+	}
+	tx.Commit()
+	return errInt, err
+}
+
+//DeleteDatabaseObjectPermanent ...
+func (rdbms *RDBMSImpl) DeleteDatabaseObjectPermanent(dbobj interface{}) (int, error) {
+	var err error
+	var errInt = 1000
+	tx := rdbms.DB.Begin()
+	txerr := tx.Model(dbobj).Unscoped().Delete(dbobj).Error
+	if txerr != nil {
+		tx.Rollback()
+		err = txerr
+		errInt = 1002
+		return errInt, err
 	}
 	tx.Commit()
 	return errInt, err

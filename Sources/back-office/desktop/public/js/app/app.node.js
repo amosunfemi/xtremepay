@@ -9675,12 +9675,12 @@ module.exports =
 	                  null,
 	                  React.createElement(
 	                    Radio,
-	                    { inline: true, value: 'MALE', defaultChecked: true, name: 'inline-radio-options' },
+	                    { inline: true, value: 'MALE', defaultChecked: true, name: 'radio-gender' },
 	                    'Male'
 	                  ),
 	                  React.createElement(
 	                    Radio,
-	                    { inline: true, value: 'FEMALE', name: 'inline-radio-options' },
+	                    { inline: true, value: 'FEMALE', name: 'radio-gender' },
 	                    'Female'
 	                  )
 	                )
@@ -9754,7 +9754,11 @@ module.exports =
 	            )
 	          ),
 	          React.createElement('hr', { style: {
-	              borderColor: '#D3D3D3', borderWidth: 2, marginTop: 15, marginBottom: 0, width: 100000
+	              borderColor: '#D3D3D3',
+	              borderWidth: 2,
+	              marginTop: 15,
+	              marginBottom: 0,
+	              width: 100000
 	            }, className: 'pull-right' }),
 	          React.createElement('br', null),
 	          React.createElement(
@@ -9836,7 +9840,7 @@ module.exports =
 	                  React.createElement(
 	                    'p',
 	                    null,
-	                    'anna.sanchez@maxmart.com. ',
+	                    'anna.sanchez@maxmart.com.',
 	                    React.createElement(
 	                      'strong',
 	                      null,
@@ -9881,7 +9885,9 @@ module.exports =
 	          null,
 	          React.createElement(
 	            'div',
-	            { id: 'form_id', style: { display: "none" } },
+	            { id: 'form_id', style: {
+	                display: "none"
+	              } },
 	            React.createElement(BeneficiaryForm, null)
 	          )
 	        )
@@ -10141,7 +10147,13 @@ module.exports =
 	              )
 	            )
 	          ),
-	          React.createElement('hr', { style: { borderColor: '#D3D3D3', borderWidth: 2, marginTop: 15, marginBottom: 0, width: 100000 }, className: 'pull-right' }),
+	          React.createElement('hr', { style: {
+	              borderColor: '#D3D3D3',
+	              borderWidth: 2,
+	              marginTop: 15,
+	              marginBottom: 0,
+	              width: 100000
+	            }, className: 'pull-right' }),
 	          React.createElement('br', null),
 	          React.createElement(
 	            Row,
@@ -10174,8 +10186,521 @@ module.exports =
 	  return LegalDetail;
 	})(React.Component);
 
-	var PersonDetail = (function (_React$Component4) {
-	  _inherits(PersonDetail, _React$Component4);
+	var BankDetail = (function (_React$Component4) {
+	  _inherits(BankDetail, _React$Component4);
+
+	  function BankDetail() {
+	    _classCallCheck(this, BankDetail);
+
+	    _get(Object.getPrototypeOf(BankDetail.prototype), 'constructor', this).apply(this, arguments);
+	  }
+
+	  _createClass(BankDetail, [{
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      $('#bankctry').select2({ placeholder: "Select a Country", allowClear: true });
+	      $('#bankname').select2({ placeholder: "Select bank", allowClear: true });
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      return React.createElement(
+	        Form,
+	        { id: 'business-form' },
+	        React.createElement(
+	          Grid,
+	          null,
+	          React.createElement(
+	            Row,
+	            null,
+	            React.createElement(
+	              Col,
+	              { sm: 4, xs: 12, collapseLeft: true, xsOnlyCollapseRight: true },
+	              React.createElement(
+	                FormGroup,
+	                null,
+	                React.createElement(
+	                  Label,
+	                  { htmlFor: 'bankacctname' },
+	                  'Account Name'
+	                ),
+	                React.createElement(Input, { id: 'text', id: 'bankacctname', placeholder: 'Bank Account Name', className: 'required' })
+	              ),
+	              React.createElement(
+	                FormGroup,
+	                null,
+	                React.createElement(
+	                  Label,
+	                  { htmlFor: 'bankctry' },
+	                  'Country Where Bank is located'
+	                ),
+	                React.createElement(
+	                  Select,
+	                  { id: 'bankctry', placeholder: 'Select a Country' },
+	                  React.createElement(
+	                    'option',
+	                    { value: '1' },
+	                    'NIGERIA'
+	                  ),
+	                  React.createElement(
+	                    'option',
+	                    { value: '2' },
+	                    'GHANA'
+	                  ),
+	                  React.createElement(
+	                    'option',
+	                    { value: '3' },
+	                    'UNITED KINGDOM'
+	                  )
+	                )
+	              ),
+	              React.createElement(
+	                FormGroup,
+	                null,
+	                React.createElement(
+	                  Label,
+	                  { htmlFor: 'bankname' },
+	                  'Bank Name'
+	                ),
+	                React.createElement(
+	                  Select,
+	                  { id: 'bankname', placeholder: 'Select Bank' },
+	                  React.createElement(
+	                    'option',
+	                    { value: '1' },
+	                    'NIGERIA'
+	                  ),
+	                  React.createElement(
+	                    'option',
+	                    { value: '2' },
+	                    'GHANA'
+	                  ),
+	                  React.createElement(
+	                    'option',
+	                    { value: '3' },
+	                    'UNITED KINGDOM'
+	                  )
+	                )
+	              ),
+	              React.createElement(
+	                FormGroup,
+	                null,
+	                React.createElement(
+	                  Label,
+	                  { htmlFor: 'bankacctno' },
+	                  'Account No'
+	                ),
+	                React.createElement(Input, { id: 'text', id: 'bankacctno', placeholder: 'Bank Account No', className: 'required' })
+	              )
+	            ),
+	            React.createElement(
+	              Col,
+	              { sm: 4, xs: 6, collapseLeft: true, className: 'form-border' },
+	              React.createElement(
+	                FormGroup,
+	                null,
+	                React.createElement(
+	                  Label,
+	                  { htmlFor: 'other detail' },
+	                  'Other detail'
+	                ),
+	                React.createElement(Input, { type: 'text', id: 'apisecret', placeholder: 'API Secret' })
+	              ),
+	              React.createElement(
+	                FormGroup,
+	                null,
+	                React.createElement(
+	                  Label,
+	                  { htmlFor: 'bankbvn' },
+	                  'BVN Number (Nigeria)'
+	                ),
+	                React.createElement(Input, { type: 'text', id: 'bankbvn', placeholder: 'BVN Number (Nigeria)' })
+	              )
+	            )
+	          ),
+	          React.createElement('hr', { style: { borderColor: '#D3D3D3', borderWidth: 2, marginTop: 15, marginBottom: 0, width: 100000 }, className: 'pull-right' }),
+	          React.createElement('br', null),
+	          React.createElement(
+	            Row,
+	            null,
+	            React.createElement(
+	              Col,
+	              { sm: 4, xs: 12, collapseLeft: true, xsOnlyCollapseRight: true },
+	              React.createElement(
+	                Button,
+	                null,
+	                'Cancel'
+	              )
+	            ),
+	            React.createElement(Col, { sm: 4, xs: 12, collapseLeft: true, xsOnlyCollapseRight: true }),
+	            React.createElement(
+	              Col,
+	              { sm: 4, xs: 6, collapseLeft: true, className: 'form-border' },
+	              React.createElement(
+	                Button,
+	                { bsStyle: 'darkgreen45' },
+	                'Update Bank Details'
+	              )
+	            )
+	          )
+	        )
+	      );
+	    }
+	  }]);
+
+	  return BankDetail;
+	})(React.Component);
+
+	var BusinessDetail = (function (_React$Component5) {
+	  _inherits(BusinessDetail, _React$Component5);
+
+	  function BusinessDetail() {
+	    _classCallCheck(this, BusinessDetail);
+
+	    _get(Object.getPrototypeOf(BusinessDetail.prototype), 'constructor', this).apply(this, arguments);
+	  }
+
+	  _createClass(BusinessDetail, [{
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      $('#idtype').select2({ placeholder: "Select a Country", allowClear: true });
+	      $('#businesstype').select2({ placeholder: "Select a business type", allowClear: true });
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      //const {date, format, mode, inputFormat} = this.state;
+	      return React.createElement(
+	        Form,
+	        { id: 'business-form' },
+	        React.createElement(
+	          Grid,
+	          null,
+	          React.createElement(
+	            Row,
+	            null,
+	            React.createElement(
+	              Col,
+	              { sm: 4, xs: 12, collapseLeft: true, xsOnlyCollapseRight: true },
+	              React.createElement(
+	                FormGroup,
+	                null,
+	                React.createElement(
+	                  Label,
+	                  { htmlFor: 'businesstype' },
+	                  'Type Of Business'
+	                ),
+	                React.createElement(
+	                  Select,
+	                  { id: 'businesstype', placeholder: 'Select a business type' },
+	                  React.createElement(
+	                    'option',
+	                    { value: '1' },
+	                    'NIGERIA'
+	                  ),
+	                  React.createElement(
+	                    'option',
+	                    { value: '2' },
+	                    'GHANA'
+	                  ),
+	                  React.createElement(
+	                    'option',
+	                    { value: '3' },
+	                    'UNITED KINGDOM'
+	                  )
+	                )
+	              ),
+	              React.createElement(
+	                FormGroup,
+	                null,
+	                React.createElement(
+	                  Label,
+	                  { htmlFor: 'hasawebsite' },
+	                  'Do you have a web site'
+	                ),
+	                React.createElement(
+	                  'div',
+	                  null,
+	                  React.createElement(
+	                    Radio,
+	                    { inline: true, value: 'YES', defaultChecked: true, name: 'hasawebsite' },
+	                    'Yes'
+	                  ),
+	                  React.createElement(
+	                    Radio,
+	                    { inline: true, value: 'NO', name: 'hasawebsite' },
+	                    'No'
+	                  )
+	                )
+	              ),
+	              React.createElement(
+	                FormGroup,
+	                null,
+	                React.createElement(
+	                  Label,
+	                  { htmlFor: 'websiteurl' },
+	                  'Web Site URL'
+	                ),
+	                React.createElement(Input, { id: 'text', id: 'websiteurl', placeholder: 'Web Site URL', className: 'required' })
+	              )
+	            ),
+	            React.createElement(
+	              Col,
+	              { sm: 4, xs: 6, collapseLeft: true, className: 'form-border' },
+	              React.createElement(
+	                FormGroup,
+	                null,
+	                React.createElement(
+	                  Label,
+	                  { htmlFor: 'apisecret' },
+	                  'API Secret *'
+	                ),
+	                React.createElement(Input, { disabled: true, type: 'text', id: 'apisecret', placeholder: 'API Secret', className: 'required' })
+	              ),
+	              React.createElement(
+	                FormGroup,
+	                null,
+	                React.createElement(
+	                  Label,
+	                  { htmlFor: 'apikey' },
+	                  'API Key *'
+	                ),
+	                React.createElement(Input, { disabled: true, type: 'text', id: 'apikey', placeholder: 'API Key', className: 'required' })
+	              )
+	            )
+	          ),
+	          React.createElement('hr', { style: { borderColor: '#D3D3D3', borderWidth: 2, marginTop: 15, marginBottom: 0, width: 100000 }, className: 'pull-right' }),
+	          React.createElement('br', null),
+	          React.createElement(
+	            Row,
+	            null,
+	            React.createElement(
+	              Col,
+	              { sm: 4, xs: 12, collapseLeft: true, xsOnlyCollapseRight: true },
+	              React.createElement(
+	                Button,
+	                null,
+	                'Cancel'
+	              )
+	            ),
+	            React.createElement(Col, { sm: 4, xs: 12, collapseLeft: true, xsOnlyCollapseRight: true }),
+	            React.createElement(
+	              Col,
+	              { sm: 4, xs: 6, collapseLeft: true, className: 'form-border' },
+	              React.createElement(
+	                Button,
+	                { bsStyle: 'darkgreen45' },
+	                'Update Business Details'
+	              )
+	            )
+	          )
+	        )
+	      );
+	    }
+	  }]);
+
+	  return BusinessDetail;
+	})(React.Component);
+
+	var CompanyDetail = (function (_React$Component6) {
+	  _inherits(CompanyDetail, _React$Component6);
+
+	  function CompanyDetail() {
+	    _classCallCheck(this, CompanyDetail);
+
+	    _get(Object.getPrototypeOf(CompanyDetail.prototype), 'constructor', this).apply(this, arguments);
+	  }
+
+	  _createClass(CompanyDetail, [{
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      $('#idtype').select2({ placeholder: "Select a Country", allowClear: true });
+	      $('#cntryhq').select2({ placeholder: "Select a Country", allowClear: true });
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      //const {date, format, mode, inputFormat} = this.state;
+	      return React.createElement(
+	        Form,
+	        { id: 'company-form' },
+	        React.createElement(
+	          Grid,
+	          null,
+	          React.createElement(
+	            Row,
+	            null,
+	            React.createElement(
+	              Col,
+	              { sm: 4, xs: 12, collapseLeft: true, xsOnlyCollapseRight: true },
+	              React.createElement(
+	                FormGroup,
+	                null,
+	                React.createElement(
+	                  Label,
+	                  { htmlFor: 'legalform' },
+	                  'Legal Form'
+	                ),
+	                React.createElement(Input, { disabled: true, type: 'text', id: 'legalform', placeholder: 'Name', className: 'required' })
+	              ),
+	              React.createElement(
+	                FormGroup,
+	                null,
+	                React.createElement(
+	                  Label,
+	                  { htmlFor: 'corporatename' },
+	                  'Corporate Name'
+	                ),
+	                React.createElement(Input, { disabled: true, type: 'email', id: 'email', placeholder: 'Email' })
+	              ),
+	              React.createElement(
+	                FormGroup,
+	                null,
+	                React.createElement(
+	                  Label,
+	                  { htmlFor: 'cntryhq' },
+	                  'Country Headquarter *'
+	                ),
+	                React.createElement(
+	                  Select,
+	                  { id: 'cntryhq', placeholder: 'Select a Country' },
+	                  React.createElement(
+	                    'option',
+	                    { value: '1' },
+	                    'NIGERIA'
+	                  ),
+	                  React.createElement(
+	                    'option',
+	                    { value: '2' },
+	                    'GHANA'
+	                  ),
+	                  React.createElement(
+	                    'option',
+	                    { value: '3' },
+	                    'UNITED KINGDOM'
+	                  )
+	                )
+	              ),
+	              React.createElement(
+	                FormGroup,
+	                null,
+	                React.createElement(
+	                  Label,
+	                  { htmlFor: 'officeadd' },
+	                  'Office Address*'
+	                ),
+	                React.createElement(Input, { id: 'text', id: 'officeadd', placeholder: 'Office Address', className: 'required' })
+	              ),
+	              React.createElement(
+	                FormGroup,
+	                null,
+	                React.createElement(
+	                  Label,
+	                  { htmlFor: 'town' },
+	                  'Town/City*'
+	                ),
+	                React.createElement(Input, { id: 'text', id: 'town', placeholder: 'Town', className: 'required' })
+	              ),
+	              React.createElement(
+	                FormGroup,
+	                null,
+	                React.createElement(
+	                  Label,
+	                  { htmlFor: 'stateregion' },
+	                  'State/Region*'
+	                ),
+	                React.createElement(Input, { id: 'text', id: 'stateregion', placeholder: 'State or Region', className: 'required' })
+	              )
+	            ),
+	            React.createElement(
+	              Col,
+	              { sm: 4, xs: 6, collapseLeft: true, className: 'form-border' },
+	              React.createElement(
+	                FormGroup,
+	                null,
+	                React.createElement(
+	                  Label,
+	                  null,
+	                  'Address Verification'
+	                ),
+	                React.createElement(
+	                  'div',
+	                  null,
+	                  React.createElement(
+	                    Radio,
+	                    { inline: true, value: 'YES', name: 'address-validate' },
+	                    'Yes'
+	                  ),
+	                  React.createElement(
+	                    Radio,
+	                    { inline: true, value: 'NO', name: 'address-validate' },
+	                    'No'
+	                  )
+	                )
+	              ),
+	              React.createElement(
+	                FormGroup,
+	                null,
+	                React.createElement(
+	                  Label,
+	                  { htmlFor: 'comregno' },
+	                  'Company Registration Number *'
+	                ),
+	                React.createElement(Input, { type: 'text', id: 'comregno', placeholder: 'Company Registration Number', className: 'required' })
+	              ),
+	              React.createElement(
+	                FormGroup,
+	                null,
+	                React.createElement(
+	                  Label,
+	                  { htmlFor: 'comphoneno' },
+	                  'Office Phone Number *'
+	                ),
+	                React.createElement(Input, { type: 'text', id: 'comphoneno', placeholder: 'Office Phone Number', className: 'required' })
+	              )
+	            )
+	          ),
+	          React.createElement('hr', { style: {
+	              borderColor: '#D3D3D3',
+	              borderWidth: 2,
+	              marginTop: 15,
+	              marginBottom: 0,
+	              width: 100000
+	            }, className: 'pull-right' }),
+	          React.createElement('br', null),
+	          React.createElement(
+	            Row,
+	            null,
+	            React.createElement(
+	              Col,
+	              { sm: 4, xs: 12, collapseLeft: true, xsOnlyCollapseRight: true },
+	              React.createElement(
+	                Button,
+	                null,
+	                'Cancel'
+	              )
+	            ),
+	            React.createElement(Col, { sm: 4, xs: 12, collapseLeft: true, xsOnlyCollapseRight: true }),
+	            React.createElement(
+	              Col,
+	              { sm: 4, xs: 6, collapseLeft: true, className: 'form-border' },
+	              React.createElement(
+	                Button,
+	                { bsStyle: 'darkgreen45' },
+	                'Update Company Details'
+	              )
+	            )
+	          )
+	        )
+	      );
+	    }
+	  }]);
+
+	  return CompanyDetail;
+	})(React.Component);
+
+	var PersonDetail = (function (_React$Component7) {
+	  _inherits(PersonDetail, _React$Component7);
 
 	  function PersonDetail() {
 	    _classCallCheck(this, PersonDetail);
@@ -10286,12 +10811,12 @@ module.exports =
 	                  null,
 	                  React.createElement(
 	                    Radio,
-	                    { inline: true, value: 'MALE', defaultChecked: true, name: 'inline-radio-options' },
+	                    { inline: true, value: 'MALE', defaultChecked: true, name: 'gender' },
 	                    'Male'
 	                  ),
 	                  React.createElement(
 	                    Radio,
-	                    { inline: true, value: 'FEMALE', name: 'inline-radio-options' },
+	                    { inline: true, value: 'FEMALE', name: 'gender' },
 	                    'Female'
 	                  )
 	                )
@@ -10365,7 +10890,11 @@ module.exports =
 	            )
 	          ),
 	          React.createElement('hr', { style: {
-	              borderColor: '#D3D3D3', borderWidth: 2, marginTop: 15, marginBottom: 0, width: 100000
+	              borderColor: '#D3D3D3',
+	              borderWidth: 2,
+	              marginTop: 15,
+	              marginBottom: 0,
+	              width: 100000
 	            }, className: 'pull-right' }),
 	          React.createElement('br', null),
 	          React.createElement(
@@ -10399,8 +10928,8 @@ module.exports =
 	  return PersonDetail;
 	})(React.Component);
 
-	var Body = (function (_React$Component5) {
-	  _inherits(Body, _React$Component5);
+	var Body = (function (_React$Component8) {
+	  _inherits(Body, _React$Component8);
 
 	  function Body() {
 	    _classCallCheck(this, Body);
@@ -10432,7 +10961,11 @@ module.exports =
 	            )
 	          ),
 	          React.createElement('hr', { style: {
-	              borderColor: '#D3D3D3', borderWidth: 2, marginTop: 15, marginBottom: 0, width: 10000
+	              borderColor: '#D3D3D3',
+	              borderWidth: 2,
+	              marginTop: 15,
+	              marginBottom: 0,
+	              width: 10000
 	            } })
 	        ),
 	        React.createElement(
@@ -10522,7 +11055,7 @@ module.exports =
 	                React.createElement(
 	                  AccordianContent,
 	                  null,
-	                  React.createElement(_globalJsxLoremipsum2['default'], { query: '5s' })
+	                  React.createElement(CompanyDetail, null)
 	                )
 	              ),
 	              React.createElement(
@@ -10536,7 +11069,7 @@ module.exports =
 	                React.createElement(
 	                  AccordianContent,
 	                  null,
-	                  React.createElement(_globalJsxLoremipsum2['default'], { query: '5s' })
+	                  React.createElement(BusinessDetail, null)
 	                )
 	              ),
 	              React.createElement(
@@ -10550,7 +11083,7 @@ module.exports =
 	                React.createElement(
 	                  AccordianContent,
 	                  null,
-	                  React.createElement(_globalJsxLoremipsum2['default'], { query: '5s' })
+	                  React.createElement(BankDetail, null)
 	                )
 	              )
 	            )
@@ -10563,8 +11096,8 @@ module.exports =
 	  return Body;
 	})(React.Component);
 
-	var _default = (function (_React$Component6) {
-	  _inherits(_default, _React$Component6);
+	var _default = (function (_React$Component9) {
+	  _inherits(_default, _React$Component9);
 
 	  function _default() {
 	    _classCallCheck(this, _default2);

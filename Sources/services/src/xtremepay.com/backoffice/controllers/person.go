@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"strconv"
 
@@ -162,7 +163,15 @@ func (c PersonController) CreatePersonIDType(res http.ResponseWriter, req *http.
 		r.JSON(res, 422, bindingErr.Error())
 		return
 	}
-	p := models.PersonIDType{c.BaseModel, personIDType.PersonID, personIDType.IDType, personIDType.IDNumber, personIDType.DateIssued, personIDType.ExpiryDate, personIDType.ScannedPicture, idTypes}
+	p := models.PersonIDType{
+		BaseModel:      c.BaseModel,
+		PersonID:       personIDType.PersonID,
+		IDType:         personIDType.IDType,
+		IDNumber:       personIDType.IDNumber,
+		DateIssued:     personIDType.DateIssued,
+		ExpiryDate:     personIDType.ExpiryDate,
+		ScannedPicture: personIDType.ScannedPicture,
+		IDTypes:        idTypes}
 	err := c.DataStore.SaveDatabaseObject(&p)
 	if err != nil {
 		panic(err)
@@ -185,8 +194,16 @@ func (c PersonController) CreateContact(res http.ResponseWriter, req *http.Reque
 		return
 	}
 
-	p := models.Contacts{c.BaseModel, contact.PhoneNo, contact.PhoneNo2, contact.PhoneNo3, contact.Email, contact.Website,
-		contact.FacebookID, contact.PersonID, contact.CompanyEntitiesID}
+	p := models.Contacts{
+		BaseModel:         c.BaseModel,
+		PhoneNo:           contact.PhoneNo,
+		PhoneNo2:          contact.PhoneNo2,
+		PhoneNo3:          contact.PhoneNo3,
+		Email:             contact.Email,
+		Website:           contact.Website,
+		FacebookID:        contact.FacebookID,
+		PersonID:          contact.PersonID,
+		CompanyEntitiesID: contact.CompanyEntitiesID}
 
 	err := c.DataStore.SaveDatabaseObject(&p)
 	if err != nil {
@@ -205,7 +222,6 @@ func (c PersonController) CreatePerson(res http.ResponseWriter, req *http.Reques
 		r.JSON(res, 422, errs.Error())
 		return
 	}
-
 	bindingErr := person.Validate(req, errs)
 
 	if bindingErr != nil {
@@ -213,8 +229,20 @@ func (c PersonController) CreatePerson(res http.ResponseWriter, req *http.Reques
 		return
 	}
 	// save to database
-	p := models.Person{c.BaseModel, person.FirstName, person.MiddleName, person.LastName, person.Title, person.Gender,
-		person.Occupation, person.DateOfBirth, person.Addresses, person.Contacts, person.PersonIDType, person.CountryOfOriginID, person.CountryOfResidenceID}
+	p := models.Person{
+		BaseModel:            c.BaseModel,
+		FirstName:            person.FirstName,
+		MiddleName:           person.MiddleName,
+		LastName:             person.LastName,
+		Title:                person.Title,
+		Gender:               person.Gender,
+		Occupation:           person.Occupation,
+		DateOfBirth:          person.DateOfBirth,
+		Addresses:            person.Addresses,
+		Contacts:             person.Contacts,
+		PersonIDType:         person.PersonIDType,
+		CountryOfOriginID:    person.CountryOfOriginID,
+		CountryOfResidenceID: person.CountryOfResidenceID}
 
 	err := c.DataStore.SaveDatabaseObject(&p)
 	if err != nil {
@@ -229,21 +257,16 @@ func (c PersonController) CreatePerson(res http.ResponseWriter, req *http.Reques
 func (c PersonController) DeletePerson(res http.ResponseWriter, req *http.Request) {
 	r := render.New(render.Options{})
 	vars := mux.Vars(req)
-	person := new(models.Person)
 	i, _ := strconv.Atoi(vars["person_id"])
-	qryparam := fmt.Sprintf("id = ?")
-	// save to database
-	//p := models.Person{c.BaseModel, person.FirstName, person.MiddleName, person.LastName, person.Title, person.Gender,
-	//	person.Occupation, person.DateOfBirth, person.Addresses, person.Contacts, person.PersonIDType, person.CountryOfOriginID, person.CountryOfResidenceID}
-	person.ID = i
+	person := new(models.Person)
 	//qryparam := map[string]interface{}{"deleted_at": time.Now()}
-
-	err := c.DataStore.DeleteDatabaseObjectWithParam(&person, qryparam, i)
+	qryparam := map[string]interface{}{"id": i}
+	_, err := c.DataStore.SearchAnyGenericObject(qryparam, &person)
+	fmt.Println(person)
+	err = c.DataStore.DeleteDatabaseObjectPermanent(&person)
 	if err != nil {
 		panic(err)
 	}
-
-	// render response
 	r.JSON(res, 200, person)
 }
 
@@ -252,26 +275,34 @@ func (c PersonController) CreateAddress(res http.ResponseWriter, req *http.Reque
 	r := render.New(render.Options{})
 	address := new(models.Addresses)
 	errs := binding.Bind(req, address)
+	bs, _ := ioutil.ReadAll(req.Body)
 	if errs.Handle(res) {
+		c.Logger.Error(fmt.Sprintf("%s, %s", errs.Error(), string(bs)))
 		r.JSON(res, 422, errs.Error())
 		return
 	}
-
 	bindingErr := address.Validate(req, errs)
-
 	if bindingErr != nil {
 		r.JSON(res, 422, bindingErr.Error())
 		return
 	}
-	// save to database
 
-	p := models.Addresses{c.BaseModel, address.AddressType, address.HouseNo, address.Street, address.Area, address.TownsID,
-		address.RegionStateID, address.CountryID, address.PersonID, address.CompanyEntitiesID}
+	p := &models.Addresses{
+		BaseModel:         c.BaseModel,
+		AddressType:       address.AddressType,
+		HouseNo:           address.HouseNo,
+		Street:            address.Street,
+		Area:              address.Area,
+		TownsID:           address.TownsID,
+		RegionStateID:     address.RegionStateID,
+		CountryID:         address.CountryID,
+		PersonID:          address.PersonID,
+		CompanyEntitiesID: address.CompanyEntitiesID}
 
-	err := c.DataStore.SaveDatabaseObject(&p)
+	err := c.DataStore.SaveDatabaseObject(p)
 	if err != nil {
 		panic(err)
 	}
-	// render response
+	c.Logger.Info(fmt.Sprintf("%v", &p))
 	r.JSON(res, 200, p)
 }

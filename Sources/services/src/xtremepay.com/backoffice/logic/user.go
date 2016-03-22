@@ -13,19 +13,27 @@ import (
 	log "gopkg.in/inconshreveable/log15.v2"
 	dataaccess "xtremepay.com/backoffice/dataaccess"
 	models "xtremepay.com/backoffice/models/util"
+	"xtremepay.com/backoffice/utility"
 )
 
 //UserLogic ...
 type UserLogic struct {
-	ServiceList map[string]string
-	Logger      log.Logger
+	ServiceList        map[string]string
+	Logger             log.Logger
+	AuthorizationToken string
 }
 
 //RegisterUser ... Register a new user by creating his record as a Person and also as a user.
+//If Contact is not attached to a person, extract it from user detail and create a contact object
 func (usrlogic *UserLogic) RegisterUser(person models.Person, user models.User) (interface{}, interface{}, error) {
 	var err error
 	restfulds := dataaccess.RESTFul{}
-	//Save Person
+	contact := models.Contacts{}
+	if len(person.Contacts) == 0 {
+		contact.Email = user.Email
+		contact.PhoneNo = user.PhoneNum
+	}
+	person.Contacts = append(person.Contacts, contact)
 	restfulds.ServiceURI = usrlogic.ServiceList["utility"]
 	restfulds.Logger = usrlogic.Logger
 	savedEntity, statusCode, err := restfulds.SaveObject(person, "person")
@@ -36,6 +44,9 @@ func (usrlogic *UserLogic) RegisterUser(person models.Person, user models.User) 
 	restfulds.ServiceURI = usrlogic.ServiceList["auth"]
 
 	user.PersonID = int(savedPerson["ID"].(float64))
+	user.Verificationtoken = utility.RandStr(6, "number")
+	user.BaseModel.Status = "UNACTIVATED"
+	user.Emailverified = true
 	savedEntity, statusCode, err = restfulds.SaveObject(user, "user")
 	if statusCode != 0 {
 		//Revert the person saved
@@ -46,6 +57,45 @@ func (usrlogic *UserLogic) RegisterUser(person models.Person, user models.User) 
 	}
 	savedUser := savedEntity.(map[string]interface{})
 	return savedPerson, savedUser, nil
+}
+
+// ChangePassword ... Update user's password, status etc
+func (usrlogic *UserLogic) ChangePassword(changedValue string) (interface{}, bool, error) {
+	var err error
+	restfulds := dataaccess.RESTFul{}
+	restfulds.ServiceURI = usrlogic.ServiceList["auth"]
+	savedEntity, statusCode, err := restfulds.UpdateObjectAuthToken(changedValue, "user/changepassword", usrlogic.AuthorizationToken)
+	if statusCode != 0 {
+		usrlogic.Logger.Error(err.Error())
+		return nil, false, err
+	}
+	return savedEntity, true, nil
+}
+
+// ActivateUser ... Activate user with the token sent to the user
+func (usrlogic *UserLogic) ActivateUser(userDetail string) (interface{}, bool, error) {
+	var err error
+	restfulds := dataaccess.RESTFul{}
+	restfulds.ServiceURI = usrlogic.ServiceList["auth"]
+	savedEntity, statusCode, err := restfulds.UpdateObject(userDetail, "user/activate")
+	if statusCode != 0 {
+		usrlogic.Logger.Crit(err.Error())
+		return nil, false, err
+	}
+	return savedEntity, true, nil
+}
+
+// AddNewAddressToUser ... Update user's password, status etc
+func (usrlogic *UserLogic) AddNewAddressToUser(address models.Addresses) (interface{}, bool, error) {
+	var err error
+	restfulds := dataaccess.RESTFul{}
+	restfulds.ServiceURI = usrlogic.ServiceList["utility"]
+	savedEntity, statusCode, err := restfulds.SaveObjectAuthToken(address, "address", usrlogic.AuthorizationToken)
+	if statusCode != 0 {
+		usrlogic.Logger.Error(err.Error())
+		return nil, false, err
+	}
+	return savedEntity, true, nil
 }
 
 //RegisteredUser ... Logical registered user expected from the controller
@@ -70,6 +120,5 @@ func (reguser *RegisteredUser) FieldMap(req *http.Request) binding.FieldMap {
 
 // Validate ...
 func (reguser *RegisteredUser) Validate(req *http.Request, errs binding.Errors) binding.Errors {
-
 	return errs
 }

@@ -17,6 +17,7 @@ type Person struct {
 	Title                string         `json:"Title"`
 	Gender               string         `json:"Gender" sql:"not null"`
 	Occupation           string         `json:"Occupation"`
+	MaidenName           string         `json:"MaidenName"`
 	DateOfBirth          time.Time      `json:"DateOfBirth"`
 	Addresses            []Addresses    `json:"Addresses"`
 	Contacts             []Contacts     `json:"Contacts"`
@@ -204,7 +205,7 @@ func (con Contacts) TableName() string {
 func (con *Contacts) FieldMap(req *http.Request) binding.FieldMap {
 	return binding.FieldMap{
 		&con.PhoneNo: binding.Field{
-			Form:     "CityTown",
+			Form:     "PhoneNo",
 			Required: true,
 		},
 		&con.Email: binding.Field{
@@ -222,7 +223,7 @@ func (con *Contacts) FieldMap(req *http.Request) binding.FieldMap {
 type CompanyEntities struct {
 	models.BaseModel
 	RegisteredName  string      `json:"RegisteredName"`
-	CompanyRegNo		string			`json:"CompanyRegNo"`
+	CompanyRegNo    string      `json:"CompanyRegNo"`
 	Addresses       []Addresses `json:"Addresses"`
 	Contacts        []Contacts  `json:"Contacts"`
 	CountryID       int         `json:"CountryID"`

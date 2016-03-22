@@ -38,6 +38,42 @@ func (restful *RESTFul) SaveObject(entity interface{}, endpoint string) (interfa
 	return nil, 1, restErr
 }
 
+//UpdateObject ... This method saves any object calling the POST method
+func (restful *RESTFul) UpdateObject(reqbody string, endpoint string) (interface{}, int, error) {
+	var restErr *RESTError
+	resp, body, _ := request.Patch(restful.ServiceURI + "/" + endpoint).Send(reqbody).End()
+	entity := map[string]interface{}{}
+	fmt.Println(resp.StatusCode)
+	if resp.StatusCode >= 200 && resp.StatusCode <= 399 {
+		//err := convertBodyToInterface(body, &entity)
+		if err := json.Unmarshal([]byte(body), &entity); err != nil {
+			restErr := restful.composeCustomError(body, resp.StatusCode)
+			return nil, 1, restErr
+		}
+		return entity, 0, nil
+	}
+	restErr = restful.composeCustomError(body, resp.StatusCode)
+	return nil, 1, restErr
+}
+
+//UpdateObjectAuthToken ... Update entites with token
+func (restful *RESTFul) UpdateObjectAuthToken(reqbody string, endpoint string, token string) (interface{}, int, error) {
+	var restErr *RESTError
+	resp, body, _ := request.Patch(restful.ServiceURI+"/"+endpoint).Set("Authorization", token).Send(reqbody).End()
+	entity := map[string]interface{}{}
+	if resp.StatusCode >= 200 && resp.StatusCode <= 399 {
+		if err := json.Unmarshal([]byte(body), &entity); err != nil {
+			restErr := restful.composeCustomError(body, resp.StatusCode)
+			return nil, 1, restErr
+		}
+		return entity, 0, nil
+	}
+	restErr = restful.composeCustomError(body, resp.StatusCode)
+	return nil, 1, restErr
+}
+
+//Set("Authorization", r.Header.Get("Authorization"))
+
 //RetrieveObject ...
 func (restful *RESTFul) RetrieveObject(endpoint string) ([]interface{}, error) {
 	var restErr *RESTError
@@ -64,16 +100,21 @@ func (restful *RESTFul) DeleteObject(endpoint string) error {
 }
 
 //SaveObjectAuthToken ... This method saves any object calling the POST method
-func (restful *RESTFul) SaveObjectAuthToken(entity interface{}, endpoint string, token string) (interface{}, error) {
-	var err error
-	resp, _, reqErrs := request.Post(restful.ServiceURI+endpoint).Set("Authorization", token).Send(entity).End()
-	if len(reqErrs) == 0 {
-		err := getJSON(resp, entity)
-		if err != nil {
-			return nil, err
+func (restful *RESTFul) SaveObjectAuthToken(entity interface{}, endpoint string, token string) (interface{}, int, error) {
+	var restErr *RESTError
+	resp, body, _ := request.Post(restful.ServiceURI+"/"+endpoint).Set("Authorization", token).Send(entity).End()
+	if resp.StatusCode >= 200 && resp.StatusCode <= 399 {
+		//err := convertBodyToInterface(body, &entity)
+		restful.Logger.Debug(fmt.Sprintf("Saved %v", resp))
+		if err := json.Unmarshal([]byte(body), &entity); err != nil {
+			restErr := restful.composeCustomError(body, resp.StatusCode)
+			return nil, 1, restErr
 		}
+		restful.Logger.Debug(fmt.Sprintf("Saved %v", entity))
+		return entity, 0, nil
 	}
-	return entity, err
+	restErr = restful.composeCustomError(body, resp.StatusCode)
+	return nil, 1, restErr
 }
 
 //RetrieveObjectAuthToken ...

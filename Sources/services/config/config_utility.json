@@ -1,0 +1,28 @@
+{
+  "service": {
+    "name": "utility",
+    "port": 3003,
+    "mode":"dev",
+    "apiprefix":"/xtremepay/v1.0/utility",
+    "log": {
+      "context": "xtremepay-utility",
+      "format": "%{color}%{time:15:04:05.000} %{shortfunc} ▶ %{level:.4s} %{id:03x}%{color:reset} %{message}",
+      "log_dir":"../../../log/utility/",
+      "error_file": "error.json",
+      "info_file": "info.json",
+      "debug_file": "debug.json",
+      "crit_file": "crit.json"
+    },
+    "datastore": {
+      "dev": {
+        "host": "127.0.0.1",
+        "port": 5432,
+        "database": "xtremepay_dev1",
+        "username": "postgres",
+        "password": "sunday123",
+        "storetype":"rdbms",
+        "dbtype":"postgres"
+      }
+    }
+  }
+}

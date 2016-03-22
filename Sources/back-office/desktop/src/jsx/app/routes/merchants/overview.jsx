@@ -279,6 +279,8 @@ class BeneficiaryPanel extends React.Component {
   }
 }
 
+
+
 class Body extends React.Component {
   render () {
     return (

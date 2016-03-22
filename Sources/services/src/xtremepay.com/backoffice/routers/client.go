@@ -10,7 +10,7 @@ import (
 	"github.com/gorilla/mux"
 	"xtremepay.com/backoffice/controllers"
 	"xtremepay.com/backoffice/security/core/authentication"
-	"xtremepay.com/backoffice/utility"
+	utility "xtremepay.com/backoffice/utility"
 )
 
 //ClientRouter ...
@@ -21,16 +21,30 @@ type ClientRouter struct {
 
 // Routing ... list of routing services
 func (client ClientRouter) Routing(router *mux.Router, apiprefix string) {
-	clientController := controllers.ClientController{client.ServiceList, client.Logger.Logger}
+	httpUtilFunc := utility.HTTPUtilityFunctions{}
+	clientController := controllers.ClientController{client.ServiceList, httpUtilFunc, client.Logger.Logger}
 
 	//User related client calls
 	router.HandleFunc(apiprefix+"/user/login", clientController.LoginUser).Methods("POST")
+	router.HandleFunc(apiprefix+"/user/activate", clientController.ActivateUser).Methods("PATCH")
 
 	router.Handle(apiprefix+"/user/logout",
 		negroni.New(
 			negroni.HandlerFunc(authentication.RequireTokenAuthentication),
 			negroni.HandlerFunc(clientController.LogoutUser),
 		)).Methods("GET")
+
+	router.Handle(apiprefix+"/user/changepassword",
+		negroni.New(
+			negroni.HandlerFunc(authentication.RequireTokenAuthentication),
+			negroni.HandlerFunc(clientController.ChangePassword),
+		)).Methods("PATCH")
+
+	router.Handle(apiprefix+"/person/address",
+		negroni.New(
+			negroni.HandlerFunc(authentication.RequireTokenAuthentication),
+			negroni.HandlerFunc(clientController.AddNewAddressToUser),
+		)).Methods("POST")
 
 	router.Handle(apiprefix+"/user/refresh-token",
 		negroni.New(

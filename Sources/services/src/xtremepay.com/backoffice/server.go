@@ -46,11 +46,11 @@ func main() {
 
 // LoadConfig ... Read configuration file and load the detail
 func (c ServiceManager) LoadConfig(configFile string) {
-	dir, _ := os.Getwd()
-	fmt.Println(dir + "/" + configFile)
+	//dir, _ := os.Getwd()
+	fmt.Println(configFile)
 	c.ViperConfig.SetConfigType("json")
 	c.ViperConfig.SetConfigName("config")
-	c.ViperConfig.SetConfigFile(dir + "/" + configFile)
+	c.ViperConfig.SetConfigFile(configFile)
 
 	c.ViperConfig.AddConfigPath("$HOME")
 	err := c.ViperConfig.ReadInConfig()
@@ -84,6 +84,8 @@ func (c ServiceManager) LoadService() string {
 	logManager.ErrorFile = logDetail["error_file"].(string)
 	logManager.InfoFile = logDetail["info_file"].(string)
 	logManager.DebugFile = logDetail["debug_file"].(string)
+	logManager.CritFile = logDetail["crit_file"].(string)
+	logManager.LogDir = logDetail["log_dir"].(string)
 	logManager.InitLog()
 
 	//routeList := []map[string]interface{}{}
@@ -127,7 +129,7 @@ func (c ServiceManager) LoadService() string {
 	case "security":
 
 		//if Err == nil {
-		userService := routers.UserRouter{*dataStore}
+		userService := routers.UserRouter{*dataStore, logManager}
 		userService.MigrateDB()
 		userService.Routing(c.Router, apiPrefix)
 		c.NegroniServer.Use(recovery.JSONRecovery(true))
